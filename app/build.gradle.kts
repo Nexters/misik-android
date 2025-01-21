@@ -1,14 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ktlint)
 }
 
 android {
-    namespace = "com.nexters.misik_android"
+    namespace = "com.nexters.misik"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.nexters.misik_android"
+        applicationId = "com.nexters.misik"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -25,7 +26,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
