@@ -1,0 +1,62 @@
+name: Android CD with Slack Integration
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build and Upload to Slack
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      # 3. Cache Gradle
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-
+
+      # 4. Setup Android SDK
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # 5. Accept licenses
+      - name: Accept licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Get Tag Name and Message
+        id: tag_info
+        run: |
+          echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          TAG_MESSAGE=$(git for-each-ref refs/tags/${GITHUB_REF##*/} --format='%(contents)')
+          echo "TAG_MESSAGE=$TAG_MESSAGE" >> $GITHUB_ENV
+
+      # 6. Build release APK
+      - name: Build APK
+        run: ./gradlew assembleDebug
+
+      - name: Share a file to that channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          method: files.uploadV2
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel_id: C089Z8QBRSL
+            initial_comment: "New release created: ${{ env.TAG_NAME }} Message: ${{ env.TAG_MESSAGE }}"
+            file: "./app/build/outputs/apk/debug/app-debug.apk"
+            filename: "app-debug.apk"
