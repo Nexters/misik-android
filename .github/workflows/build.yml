@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
-    branches:
-      - main
 
 concurrency:
   group: build-${{ github.ref }}
@@ -51,30 +50,19 @@ jobs:
     - name: Run Spotless Check
       run: ./gradlew spotlessCheck
 
-    # 6. Check Dependency Guard
-    - name: Check Dependency Guard
-      id: dependencyguard_verify
-      continue-on-error: true
-      run: ./gradlew dependencyGuard
-
-
-    # 8. Run Unit Tests
+    # 6. Run Unit Tests
     - name: Run Unit Tests
       run: ./gradlew test
 
-    # 9. Run Lint
+    # 7. Run Lint
     - name: Run Lint
       run: ./gradlew lint
 
-    # 10. Build APK
+    # 8. Build APK
     - name: Build APK
       run: ./gradlew assembleDebug
 
-    # 11. Generate Coverage Report
-    - name: Generate Coverage Report
-      run: ./gradlew createDebugCoverageReport
-
-    # 12. Upload Artifacts
+    # 9. Upload Artifacts
     - name: Upload APKs
       uses: actions/upload-artifact@v4
       with:
@@ -87,12 +75,8 @@ jobs:
         name: Test Results
         path: '**/build/test-results/**/*.xml'
 
-    - name: Upload Coverage Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: Coverage Report
-        path: '**/build/reports/jacoco/**/*.html'
-    - name: Slack - Send msg
+    # 10. Notify in Slack
+    - name: Notify in Slack
       uses: 8398a7/action-slack@v3
       with:
         status: ${{job.status}}

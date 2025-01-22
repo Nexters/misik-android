@@ -2,7 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.spotless)
 }
+
+val ktlintVersion = "1.4.0"
 
 android {
     namespace = "com.nexters.misik"
@@ -67,4 +71,18 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+detekt {
+    config.from("${projectDir}/config/detekt/detekt-config.yml")
+    buildUponDefaultConfig = true
+    debug = true
+}
+
+spotless {
+    kotlin {
+        target("**/*.kt")
+        targetExclude("**/build/**/*.kt")
+        ktlint(ktlintVersion)
+    }
 }
