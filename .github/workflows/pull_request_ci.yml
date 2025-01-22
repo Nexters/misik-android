@@ -48,22 +48,11 @@ jobs:
       - name: Run ktlint
         run: ./gradlew ktlintCheck
 
-      - name: On Success, Notify in Slack
-        if: ${{ success() }}
-        uses: rtCamp/action-slack-notify@v2
+      - name: Notify in Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{job.status}}
+          fields: repo,message,commit,author,action,eventName,ref,workflow
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_TITLE: 'Misik Android PR Check Success ✅'
-          MSG_MINIMAL: true
-          SLACK_USERNAME: Misik Android
-          SLACK_MESSAGE: 'Misik Android PR Check Success'
-
-      - name: On Failed, Notify in Slack
-        if: ${{ failure() }}
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_TITLE: 'Misik Android PR Check Fail 🚫'
-          MSG_MINIMAL: true
-          SLACK_USERNAME: Misik Android
-          SLACK_MESSAGE: 'Misik Android PR Check Fail'
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
