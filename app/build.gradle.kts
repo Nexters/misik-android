@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.spotless)
 }
 
-val ktlintVersion = "1.4.0"
+val ktlintVersion = "0.50.0"
 
 android {
     namespace = "com.nexters.misik"
