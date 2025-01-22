@@ -44,7 +44,8 @@ jobs:
         run: |
           echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
           TAG_MESSAGE=$(git for-each-ref refs/tags/${GITHUB_REF##*/} --format='%(contents)')
-          echo "TAG_MESSAGE=$TAG_MESSAGE" >> $GITHUB_ENV
+          TAG_MESSAGE_SANITIZED=$(echo "$TAG_MESSAGE" | tr -d '\n' | tr -d '\r')
+          echo "TAG_MESSAGE=$TAG_MESSAGE_SANITIZED" >> $GITHUB_ENV
 
       # 6. Build release APK
       - name: Build APK
