@@ -40,8 +40,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Add Local Properties
-
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
 
