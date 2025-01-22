@@ -1,4 +1,4 @@
-package com.nexters.misik_android.ui.theme
+package com.nexters.misik.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
