@@ -102,17 +102,17 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 # Custom Plugins
-daangn-gallery-application = { id = "daangn.gallery.android.application", version = "unspecified" }
-daangn-gallery-android-application-compose = { id = "daangn.gallery.android.application.compose", version = "unspecified"}
-daangn-gallery-android-library = { id = "daangn.gallery.android.library", version = "unspecified" }
-daangn-gallery-android-compose-library = { id = "daangn.gallery.android.compose.library", version = "unspecified" }
-daangn-gallery-android-hilt = { id = "daangn.gallery.android.hilt", version = "unspecified"}
-daangn-gallery-java-library = { id = "daangn.gallery.java.library", version = "unspecified" }
-daangn-gallery-feature = { id = "daangn.gallery.feature", version = "unspecified" }
-daangn-gallery-data = { id = "daangn.gallery.data", version = "unspecified" }
-daangn-gallery-plugin-android-test = { id = "daangn.gallery.plugin.android.test", version = "unspecified" }
-daangn-gallery-plugin-test = { id = "daangn.gallery.plugin.test", version = "unspecified" }
-daangn-gallery-plugin-build-config = { id = "daangn.gallery.plugin.build.config", version = "unspecified" }
+misik-application = { id = "misik.android.application", version = "unspecified" }
+misik-android-application-compose = { id = "misik.android.application.compose", version = "unspecified"}
+misik-android-library = { id = "misik.android.library", version = "unspecified" }
+misik-android-compose-library = { id = "misik.android.compose.library", version = "unspecified" }
+misik-android-hilt = { id = "misik.android.hilt", version = "unspecified"}
+misik-java-library = { id = "misik.java.library", version = "unspecified" }
+misik-feature = { id = "misik.feature", version = "unspecified" }
+misik-data = { id = "misik.data", version = "unspecified" }
+misik-plugin-android-test = { id = "misik.plugin.android.test", version = "unspecified" }
+misik-plugin-test = { id = "misik.plugin.test", version = "unspecified" }
+misik-plugin-build-config = { id = "misik.plugin.build.config", version = "unspecified" }
 
 [libraries]
 # Android Gradle Plugin
@@ -183,6 +183,7 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
 hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+hilt-testing-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 javax-inject = {group = "javax.inject", name = "javax.inject", version.ref = "javax" }
 
 # Orbit
