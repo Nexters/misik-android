@@ -33,7 +33,7 @@ spotless {
 }
 
 detekt {
-    config.from("${projectDir}/config/detekt/detekt-config.yml")
+    config.from("$projectDir/config/detekt/detekt-config.yml")
     buildUponDefaultConfig = true
     debug = true
 }
