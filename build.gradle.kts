@@ -14,13 +14,19 @@ plugins {
 spotless {
     kotlin {
         target("**/*.kt")
-        ktlint("0.50.0").userData(mapOf("indent_size" to "4", "continuation_indent_size" to "4"))
+        ktlint("0.50.0").userData(
+            mapOf(
+                "indent_size" to "4",
+                "continuation_indent_size" to "4",
+            ),
+        )
     }
     kotlinGradle {
         target("*.gradle.kts")
-        ktlint()
-        "userData" to mapOf(
-            "disabled_rules" to "no-wildcard-imports,import-ordering,trailing-comma",
+        ktlint().userData(
+            mapOf(
+                "disabled_rules" to "no-wildcard-imports, import-ordering, trailing-comma",
+            ),
         )
     }
 }
