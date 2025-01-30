@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.spotless)
+    alias(libs.plugins.detekt)
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.android.library) apply false
@@ -29,4 +30,10 @@ spotless {
             ),
         )
     }
+}
+
+detekt {
+    config.from("${projectDir}/config/detekt/detekt-config.yml")
+    buildUponDefaultConfig = true
+    debug = true
 }
