@@ -6,3 +6,7 @@ plugins {
     alias(libs.plugins.misik.android.hilt)
 
 }
+
+android {
+    namespace = "com.nexters.misik"
+}
