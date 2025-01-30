@@ -32,12 +32,12 @@ gradlePlugin {
 
         register("misikFeature") {
             id = "misik.feature"
-            implementationClass = "misikFeaturePlugin"
+            implementationClass = "MisikFeaturePlugin"
         }
 
         register("misikData") {
             id = "misik.data"
-            implementationClass = "misikDataPlugin"
+            implementationClass = "MisikDataPlugin"
         }
 
         register("androidLibrary") {
