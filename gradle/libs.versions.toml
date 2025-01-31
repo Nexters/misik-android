@@ -11,7 +11,7 @@ versionName = "1.0.0"
 versionCode = "1"
 
 # Android Plugin Versions
-android-gradle-plugin = "8.5.0"
+android-gradle-plugin = "8.8.0"
 ksp = "2.0.0-1.0.22"
 
 # Formatting Plugin Versions
