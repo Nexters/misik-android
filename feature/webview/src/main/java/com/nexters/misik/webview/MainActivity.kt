@@ -31,7 +31,6 @@ class MainActivity : ComponentActivity() {
             Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                 WebViewScreen(webAppInterface, modifier = Modifier.padding(innerPadding))
             }
-
         }
     }
 
@@ -43,7 +42,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun WebViewScreen(
     webAppInterface: WebInterface,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AndroidView(
         modifier = modifier,
@@ -55,8 +54,6 @@ fun WebViewScreen(
                 addJavascriptInterface(webAppInterface, "AndroidBridge")
                 loadUrl(WEB_URL)
             }
-        }
+        },
     )
 }
-
-
