@@ -10,3 +10,7 @@ plugins {
 android {
     namespace = "com.nexters.misik"
 }
+
+dependencies {
+    implementation(projects.feature.webview)
+}
