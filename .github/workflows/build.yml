@@ -42,20 +42,21 @@ jobs:
           restore-keys: |
             gradle-
 
-      # 4. Run Static Analysis (Detekt)
-      - name: Run Detekt
-        run: ./gradlew detekt
-
-      # 5. Check Code Formatting (Spotless)
-      - name: Run Spotless Check
-        run: ./gradlew spotlessCheck
-
-      # 6. Add Local Properties
+      # 4. Add Local Properties
       - name: Add Local Properties
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
         run: |
           echo base.url=\"$BASE_URL\" >> ./local.properties
+
+      # 5. Run Static Analysis (Detekt)
+      - name: Run Detekt
+        run: ./gradlew detekt
+
+      # 6. Check Code Formatting (Spotless)
+      - name: Run Spotless Check
+        run: ./gradlew spotlessCheck
+
 
       #   # 6. Run Unit Tests
       #    - name: Run Unit Tests
