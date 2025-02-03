@@ -28,3 +28,6 @@ include(":data")
 include(":domain")
 include(":feature")
 include(":feature:webview")
+include(":network")
+
+gradle.startParameter.excludedTaskNames.addAll(listOf(":build-logic:convention:testClasses"))
