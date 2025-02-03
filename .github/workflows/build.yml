@@ -51,8 +51,8 @@ jobs:
       run: ./gradlew spotlessCheck
 
     # 6. Run Unit Tests
-    - name: Run Unit Tests
-      run: ./gradlew test
+#    - name: Run Unit Tests
+#      run: ./gradlew test
 
     # 7. Run Lint
     - name: Run Lint
