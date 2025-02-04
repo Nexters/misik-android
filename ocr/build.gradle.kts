@@ -38,8 +38,10 @@ dependencies {
     implementation(projects.domain)
     implementation(libs.timber)
 
-    
+    implementation(libs.play.services.mlkit.text.recognition)
+    implementation(libs.play.services.mlkit.text.recognition.korean)
 
+    implementation(libs.mlkit.text.recognition)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

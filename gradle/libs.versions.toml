@@ -3,6 +3,8 @@
 # SDK Versions
 compileSdk = "35"
 minSdk = "28"
+playServicesMlkitTextRecognition = "19.0.1"
+playServicesMlkitTextRecognitionKorean = "16.0.1"
 targetSdk = "35"
 jdkVersion = "17"
 
@@ -84,6 +86,9 @@ process-pheonix = "3.0.0"
 preference = "1.2.1"
 spotless = "6.21.0"
 
+#ocr
+mlkit-text = "16.0.1"
+
 [plugins]
 # Gradle Plugins
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
@@ -95,7 +100,7 @@ android-application = { id = "com.android.application", version.ref = "android-g
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-google-service = { id = "com.google.gms.google-services", version.ref = "google-service" }
+gms = { id = "com.google.gms.google-services", version.ref = "google-service" }
 navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "androidx-navigation" }
 android-test = { id = "com.android.test", version.ref = "android-gradle-plugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
@@ -113,6 +118,8 @@ misik-data = { id = "misik.data", version = "unspecified" }
 misik-plugin-android-test = { id = "misik.plugin.android.test", version = "unspecified" }
 misik-plugin-test = { id = "misik.plugin.test", version = "unspecified" }
 misik-plugin-build-config = { id = "misik.plugin.build.config", version = "unspecified" }
+misik-android-application-firebase = { id = "misik.android.application.firebase" }
+
 
 [libraries]
 # Android Gradle Plugin
@@ -223,6 +230,13 @@ lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie"
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 kakao-login = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao-login" }
 process-phoenix = { module = "com.jakewharton:process-phoenix", version.ref = "process-pheonix" }
+
+# OCR
+mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkit-text" }
+play-services-mlkit-text-recognition = { module = "com.google.android.gms:play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" }
+play-services-mlkit-text-recognition-korean = { module = "com.google.android.gms:play-services-mlkit-text-recognition-korean", version.ref = "playServicesMlkitTextRecognitionKorean" }
+
+
 
 [bundles]
 firebase = ["firebase-analytics", "firebase-database", "firebase-messaging", "firebase-remoteConfig"]
