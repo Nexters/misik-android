@@ -3,7 +3,6 @@ package com.nexters.misik.ocr.service
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import com.eunsong.ocr.utils.BitmapUtils.scaleBitmapDown
 import com.google.android.gms.tasks.Task
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.HttpsCallableResult
@@ -14,9 +13,9 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import com.nexters.misik.ocr.model.OcrResult
+import com.nexters.misik.ocr.util.BitmapUtils.scaleBitmapDown
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
