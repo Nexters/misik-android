@@ -16,6 +16,7 @@ import com.nexters.misik.ocr.model.OcrResult
 import com.nexters.misik.ocr.util.BitmapUtils.scaleBitmapDown
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.ByteArrayOutputStream

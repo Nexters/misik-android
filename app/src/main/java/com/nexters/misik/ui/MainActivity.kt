@@ -1,32 +1,30 @@
-package com.nexters.misik.webview
+package com.nexters.misik.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var webAppInterface: WebInterface
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
-            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                WebViewScreen(
-                    webAppInterface = webAppInterface,
-                    modifier = Modifier.padding(innerPadding),
-                )
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = androidx.compose.ui.Alignment.Center,
+            ) {
+                Button(onClick = { /*throw RuntimeException("Test Crash") */ }) {
+                    Text("Click Me")
+                }
             }
         }
     }
