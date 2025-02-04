@@ -9,11 +9,11 @@ internal fun Project.configureBuildConfig(
 ) {
     commonExtension.apply {
         defaultConfig {
-            buildConfigField(
-                "String",
-                "BASE_URL",
-                gradleLocalProperties(rootDir, providers).getProperty("base.url"),
-            )
+//            buildConfigField(
+//                "String",
+//                "BASE_URL",
+//                gradleLocalProperties(rootDir, providers).getProperty("base.url"),
+//            )
         }
 
         buildFeatures {

@@ -61,14 +61,14 @@ object NetworkModule {
         .addInterceptor(loggingInterceptor)
         .build()
 
-    @Singleton
-    @Provides
-    fun provideRetrofit(
-        @Logging client: OkHttpClient,
-        converterFactory: Converter.Factory,
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(com.hyeseon.misik.network.BuildConfig.BASE_URL)
-        .client(client)
-        .addConverterFactory(converterFactory)
-        .build()
+//    @Singleton
+//    @Provides
+//    fun provideRetrofit(
+//        @Logging client: OkHttpClient,
+//        converterFactory: Converter.Factory,
+//    ): Retrofit = Retrofit.Builder()
+//        .baseUrl(com.hyeseon.misik.network.BuildConfig.BASE_URL)
+//        .client(client)
+//        .addConverterFactory(converterFactory)
+//        .build()
 }
