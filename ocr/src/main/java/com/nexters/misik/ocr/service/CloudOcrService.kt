@@ -38,16 +38,6 @@ class CloudOcrService @Inject constructor(
                     .await()
             }
 
-//            annotateImage(requestJson)
-//                .addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        Timber.i("Response success JSON: $task")
-//
-//                    } else {
-//                        Timber.i("Response failed JSON: $task")
-//                    }
-//                }
-
             return ocrResult(response) //OcrResult(text = "Success", blocks = emptyList())
         } catch (e: Exception) {
             Timber.e(e)

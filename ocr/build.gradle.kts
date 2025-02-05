@@ -14,6 +14,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        manifestPlaceholders["mlkit_vision_dependencies"] =
+            "ocr,ocr_korean"
     }
 
     buildTypes {

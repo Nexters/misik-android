@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
-import androidx.core.content.FileProvider
-import java.io.File
 import javax.inject.Inject
 
 class ImageHandler @Inject constructor() {
@@ -17,8 +15,7 @@ class ImageHandler @Inject constructor() {
     }
 
     fun getCameraIntent(context: Context): Pair<Intent, Uri> {
-        val file = File(context.cacheDir, "captured_image.jpg")
-        val uri = FileProvider.getUriForFile(context, "com.example.fileprovider", file)
+        val uri = ImageStorageUtil.createImageUri(context)
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
             putExtra(MediaStore.EXTRA_OUTPUT, uri)
         }
