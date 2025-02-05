@@ -12,7 +12,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class OnDeviceOcrService @Inject constructor() : OcrService {
+class OnDeviceOcrRecognizer @Inject constructor() : OcrRecognizer {
     private val recognizer =
         TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
 

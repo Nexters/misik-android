@@ -22,9 +22,9 @@ import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-class CloudOcrService @Inject constructor(
+class CloudOcrRecognizer @Inject constructor(
     private val firebaseFunctions: FirebaseFunctions,
-) : OcrService {
+) : OcrRecognizer {
 
     override suspend fun recognizeText(imagePath: String): OcrResult {
         try {

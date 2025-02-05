@@ -12,5 +12,6 @@ dependencies {
     implementation(projects.data)
     implementation(projects.domain)
     implementation(projects.network)
+    implementation(projects.feature.preview)
     implementation(libs.gson)
 }
