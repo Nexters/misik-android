@@ -64,7 +64,6 @@ jobs:
       - name: Run Spotless Check
         run: ./gradlew spotlessCheck
 
-
       #   # 6. Run Unit Tests
       #    - name: Run Unit Tests
       #      run: ./gradlew test

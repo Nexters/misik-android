@@ -1,6 +1,5 @@
 package com.nexters.misik.network
 
-import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -75,14 +74,14 @@ object NetworkModule {
         .addInterceptor(authInterceptor)
         .build()
 
-//    @Singleton
-//    @Provides
-//    fun provideRetrofit(
-//        @Logging client: OkHttpClient,
-//        converterFactory: Converter.Factory,
-//    ): Retrofit = Retrofit.Builder()
-//        .baseUrl(com.hyeseon.misik.network.BuildConfig.BASE_URL)
-//        .client(client)
-//        .addConverterFactory(converterFactory)
-//        .build()
+    @Singleton
+    @Provides
+    fun provideRetrofit(
+        @Logging client: OkHttpClient,
+        converterFactory: Converter.Factory,
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(com.hyeseon.misik.network.BuildConfig.BASE_URL)
+        .client(client)
+        .addConverterFactory(converterFactory)
+        .build()
 }

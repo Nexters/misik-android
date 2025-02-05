@@ -12,5 +12,5 @@ dependencies {
     implementation(projects.data)
     implementation(projects.domain)
     implementation(projects.network)
-
+    implementation(libs.gson)
 }

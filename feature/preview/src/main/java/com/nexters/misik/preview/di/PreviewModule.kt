@@ -2,6 +2,7 @@ package com.nexters.misik.preview.di
 
 import com.nexters.misik.preview.PreviewService
 import com.nexters.misik.preview.util.ImageHandler
+import com.nexters.misik.preview.util.PermissionHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,13 +15,22 @@ object PreviewModule {
 
     @Provides
     @ActivityScoped
+    fun providePermissionHandler(): PermissionHandler {
+        return PermissionHandler()
+    }
+
+    @Provides
+    @ActivityScoped
     fun provideImageHandler(): ImageHandler {
         return ImageHandler()
     }
 
     @Provides
     @ActivityScoped
-    fun providePreviewService(imageHandler: ImageHandler): PreviewService {
-        return PreviewService(imageHandler)
+    fun providePreviewService(
+        permissionHandler: PermissionHandler,
+        imageHandler: ImageHandler,
+    ): PreviewService {
+        return PreviewService(permissionHandler, imageHandler)
     }
 }

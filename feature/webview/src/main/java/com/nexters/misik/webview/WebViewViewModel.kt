@@ -18,6 +18,40 @@ class WebViewViewModel @Inject constructor(
     private val _state = MutableStateFlow(WebViewState())
     val state: StateFlow<WebViewState> get() = _state
 
+    fun sendIntent(intent: WebViewIntent) {
+        when (intent) {
+            is WebViewIntent.OpenCamera -> {
+                Timber.d("WebViewIntent: OpenCamera")
+                // 카메라 실행 로직 (UI 이벤트 발생 가능)
+            }
+
+            is WebViewIntent.OpenGallery -> {
+                Timber.d("WebViewIntent: OpenGallery")
+                // 갤러리 실행 로직 (UI 이벤트 발생 가능)
+            }
+
+            is WebViewIntent.Share -> {
+                Timber.d("WebViewIntent: Share -> ${intent.content}")
+                // 공유 기능 실행
+            }
+
+            is WebViewIntent.CreateReview -> {
+                Timber.d("WebViewIntent: CreateReview -> ${intent.ocrText}")
+                generateReview(intent)
+            }
+
+            is WebViewIntent.Copy -> {
+                Timber.d("WebViewIntent: Copy -> ${intent.review}")
+                copyToClipboard(intent.review)
+            }
+        }
+    }
+
+    private fun copyToClipboard(review: String) {
+        // TODO
+    }
+
+
     fun onEvent(event: WebViewEvent) {
         when (event) {
             WebViewEvent.LoadPage -> {
@@ -39,12 +73,12 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
-    fun generateReview() {
+    private fun generateReview(intent: WebViewIntent.CreateReview) {
         viewModelScope.launch {
             reviewRepository.generateReview(
-                ocrText = "청담커피•앤•토스트 전화번호: 02-554-2458•주소: 서울특별시 강남구 • 테헤란로 313•지하 1층• 2024-07-29 NO: 2-267 •품명 • 단가 수량 카야토스트 음료세트 3,000 admin 금액 6.5 100% • 리얼 토마토 생과일주스 (3500) 소계 1품목 1건 6,500",
-                hashTags = listOf("특별한 메뉴가 있어요"),
-                reviewStyle = "CUTE",
+                ocrText = intent.ocrText,
+                hashTags = intent.hashTags,
+                reviewStyle = intent.reviewStyle,
             )
                 .onSuccess { data ->
                     if (data != null) {
