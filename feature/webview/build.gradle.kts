@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.misik.android.library)
     alias(libs.plugins.misik.feature)
+    alias(libs.plugins.misik.android.hilt)
 }
 
 android {
@@ -8,5 +9,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.data)
     implementation(projects.domain)
+    implementation(projects.network)
+
 }

@@ -9,13 +9,11 @@ import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,34 +25,26 @@ fun WebViewScreen(
     modifier: Modifier = Modifier,
     viewModel: WebViewViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     // 페이지 로딩 이벤트 발생 (WebView 로드 시작 시)
     LaunchedEffect(Unit) {
         viewModel.onEvent(WebViewEvent.LoadPage)
+        viewModel.generateReview()
+        viewModel.getReview()
     }
 
     Box(modifier = modifier.fillMaxSize()) {
         // 로딩 상태 UI
-        if (state.isLoading) {
+        if (uiState.isLoading) {
             Timber.d("WebViewScreen_UiState", "Loading")
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
             )
         }
 
-        // 에러 상태 UI
-        state.error?.let {
-            Timber.d("WebViewScreen_UiState", "Error: $it")
-            Text(
-                text = "Error: $it",
-                color = Color.Red,
-                modifier = Modifier.align(Alignment.Center),
-            )
-        }
-
         // 콘텐츠가 있을 경우, WebView를 보여줌
-        if (!state.isLoading) {
+        if (!uiState.isLoading) {
             Timber.d("WebViewScreen_UiState", "Loaded")
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
