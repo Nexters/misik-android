@@ -1,24 +1,54 @@
 package com.nexters.misik.preview.util
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.MediaStore
-import javax.inject.Inject
+import android.app.Activity
+import android.graphics.Bitmap
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.activity.result.contract.ActivityResultContracts.TakePicturePreview
 
-class ImageHandler @Inject constructor() {
+class ImageHandler {
+    private lateinit var activity: Activity
+    private lateinit var galleryLauncher: ActivityResultLauncher<String>
+    private lateinit var cameraLauncher: ActivityResultLauncher<Void?>
 
-    fun getGalleryIntent(): Intent {
-        return Intent(Intent.ACTION_PICK).apply {
-            type = "image/*"
+    fun init(activity: ComponentActivity) {
+        this.activity = activity
+
+        // 갤러리 실행
+        this.galleryLauncher = activity.registerForActivityResult(GetContent()) { uri ->
+            uri?.let { selectedUri ->
+                ImageStorageUtil.getFileFromUri(activity, selectedUri)?.absolutePath?.let {
+                    startPreviewActivity(it)
+                }
+            }
         }
+
+        // 카메라 실행
+        this.cameraLauncher =
+            activity.registerForActivityResult(TakePicturePreview()) { bitmap: Bitmap? ->
+                bitmap?.let {
+                    startPreviewActivity(ImageStorageUtil.saveBitmapToFile(activity, it))
+                }
+            }
     }
 
-    fun getCameraIntent(context: Context): Pair<Intent, Uri> {
-        val uri = ImageStorageUtil.createImageUri(context)
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-            putExtra(MediaStore.EXTRA_OUTPUT, uri)
+    fun openGallery() {
+        galleryLauncher.launch("image/*")
+    }
+
+    fun openCamera() {
+        cameraLauncher.launch(null)
+    }
+
+    private fun startPreviewActivity(imageUri: String) {
+        // 갤러리 및 카메라에서 얻은 이미지 -> preview activity로 전송
+        val intent = android.content.Intent(
+            activity,
+            com.nexters.misik.preview.ui.PreviewActivity::class.java,
+        ).apply {
+            putExtra("imageUri", imageUri)
         }
-        return Pair(intent, uri)
+        activity.startActivity(intent)
     }
 }
