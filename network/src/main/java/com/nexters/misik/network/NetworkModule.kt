@@ -40,25 +40,39 @@ object NetworkModule {
         return json.asConverterFactory(CONTENT_TYPE.toMediaType())
     }
 
-    @Logging
+    @Logger
     @Singleton
     @Provides
     fun provideLoggingInterceptor(): Interceptor =
         HttpLoggingInterceptor().setLevel(
-            if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.NONE
-            },
+
+            HttpLoggingInterceptor.Level.BODY,
+
         )
+
+    @Auth
+    @Singleton
+    @Provides
+    fun provideAuthInterceptor(): Interceptor = Interceptor { chain ->
+        val originalRequest = chain.request()
+
+        // 일단은 모든 요청 100 으로 고정
+        val newRequest = originalRequest.newBuilder()
+            .addHeader("device-id", "100")
+            .build()
+
+        chain.proceed(newRequest)
+    }
 
     @Logging
     @Singleton
     @Provides
     fun provideOkHttpClient(
-        @Logging loggingInterceptor: Interceptor,
+        @Logger loggingInterceptor: Interceptor,
+        @Auth authInterceptor: Interceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(authInterceptor)
         .build()
 
     @Singleton
