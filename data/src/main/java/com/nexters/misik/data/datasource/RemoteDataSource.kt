@@ -1,8 +1,8 @@
 package com.nexters.misik.data.datasource
 
-import com.nexters.misik.data.dto.GenerateReviewRequestDto
-import com.nexters.misik.data.dto.GetReviewResponseDto
-import com.nexters.misik.data.service.ReviewService
+import com.nexters.misik.network.dto.GenerateReviewRequestDto
+import com.nexters.misik.network.dto.GetReviewResponseDto
+import com.nexters.misik.network.service.ReviewService
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(

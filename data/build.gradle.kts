@@ -10,6 +10,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.network)
     implementation(libs.timber)
     implementation(libs.retrofit.core)
     implementation(libs.okhttp.logging)

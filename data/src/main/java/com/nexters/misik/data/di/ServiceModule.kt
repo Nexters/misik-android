@@ -1,6 +1,6 @@
 package com.nexters.misik.data.di
 
-import com.nexters.misik.data.service.ReviewService
+import com.nexters.misik.network.service.ReviewService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
