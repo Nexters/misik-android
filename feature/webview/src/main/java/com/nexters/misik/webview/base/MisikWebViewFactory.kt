@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup
 import android.webkit.WebView
-import com.hyeseon.misik.network.BuildConfig
 import com.nexters.misik.webview.WebViewEvent
 import com.nexters.misik.webview.bridge.WebInterface
 
@@ -27,7 +26,7 @@ object MisikWebViewFactory {
             webViewClient = MisikWebViewClient(onEvent)
             webChromeClient = MisikWebChromeClient()
 
-            loadUrl(BuildConfig.BASE_URL)
+            loadUrl("https://misik-web.vercel.app/")
         }
     }
 }
