@@ -11,5 +11,11 @@ android {
 
 dependencies {
     implementation(libs.timber)
+    implementation(libs.retrofit.core)
+    implementation(libs.okhttp.logging)
+    implementation(projects.domain)
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.retrofit.kotlinx.serialization.converter)
+    implementation(libs.kotlinx.serialization.json)
 }
 
