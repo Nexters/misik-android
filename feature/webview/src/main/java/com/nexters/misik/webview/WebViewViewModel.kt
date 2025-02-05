@@ -1,5 +1,6 @@
 package com.nexters.misik.webview
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nexters.misik.domain.ReviewRepository
@@ -56,6 +57,25 @@ class WebViewViewModel @Inject constructor(
                 }
                 .onFailure { exception ->
                     Timber.d("generateReview_Failure", exception.message)
+                }
+        }
+    }
+
+    fun getReview() {
+        viewModelScope.launch {
+            reviewRepository.getReview(
+                id = 674907886775732982
+            )
+                .onSuccess { data ->
+                    if (data != null) {
+                        _state.update {
+                            it.copy(review = data)
+                        }
+                        Timber.d("getReview_Success", " ${data.isSuccess} ${data.review} ${data.id}")
+                    }
+                }
+                .onFailure { exception ->
+                    Timber.d("getReview_Failure", exception.message)
                 }
         }
     }
