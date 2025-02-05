@@ -1,7 +1,6 @@
 package com.nexters.misik.data.repository
 
 import com.nexters.misik.data.datasource.RemoteDataSource
-import com.nexters.misik.data.mapper.ReviewMapper.toReviewEntity
 import com.nexters.misik.domain.ReviewEntity
 import com.nexters.misik.domain.ReviewRepository
 import com.nexters.misik.network.dto.GenerateReviewRequestDto
@@ -25,7 +24,6 @@ class ReviewRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getReview(id: Long): Result<ReviewEntity?> = runCatching {
-        val responseDto = remoteDataSource.getReview(id)
-        responseDto.toReviewEntity()
+        remoteDataSource.getReview(id)
     }
 }
