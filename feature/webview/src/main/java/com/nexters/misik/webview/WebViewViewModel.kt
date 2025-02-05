@@ -1,6 +1,5 @@
 package com.nexters.misik.webview
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nexters.misik.domain.ReviewRepository
@@ -64,7 +63,7 @@ class WebViewViewModel @Inject constructor(
     fun getReview() {
         viewModelScope.launch {
             reviewRepository.getReview(
-                id = 674907886775732982
+                id = 674907886775732982,
             )
                 .onSuccess { data ->
                     if (data != null) {
