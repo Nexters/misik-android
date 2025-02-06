@@ -72,16 +72,4 @@ object BitmapUtils {
 
         return resultBitmap
     }
-
-    /*    private fun applyGaussianBlur(bitmap: Bitmap): Bitmap {
-            val rs = RenderScript.create(context)
-            val input = Allocation.createFromBitmap(rs, bitmap)
-            val output = Allocation.createTyped(rs, input.type)
-            val script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
-            script.setRadius(5f) // 블러 강도 (1f ~ 25f)
-            script.setInput(input)
-            script.forEach(output)
-            output.copyTo(bitmap)
-            return bitmap
-        }*/
 }
