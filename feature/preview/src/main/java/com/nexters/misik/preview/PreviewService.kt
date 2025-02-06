@@ -19,8 +19,8 @@ class PreviewService @Inject constructor(
 
     fun init(activity: ComponentActivity) {
         this.activity = activity
-        permissionHandler.init(activity)  // 권한 요청 초기화
-        imageHandlerUtil.init(activity)  // 이미지 처리 초기화
+        permissionHandler.init(activity) // 권한 요청 초기화
+        imageHandlerUtil.init(activity) // 이미지 처리 초기화
     }
 
     fun openGallery() {

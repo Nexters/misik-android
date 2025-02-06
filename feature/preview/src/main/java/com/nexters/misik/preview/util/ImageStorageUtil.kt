@@ -69,7 +69,6 @@ object ImageStorageUtil {
             }
 
             return rotateBitmap(bitmap, rotationAngle)
-
         } catch (e: IOException) {
             e.printStackTrace()
         }

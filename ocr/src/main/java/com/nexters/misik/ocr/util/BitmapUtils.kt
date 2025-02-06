@@ -84,5 +84,4 @@ object BitmapUtils {
             output.copyTo(bitmap)
             return bitmap
         }*/
-
 }

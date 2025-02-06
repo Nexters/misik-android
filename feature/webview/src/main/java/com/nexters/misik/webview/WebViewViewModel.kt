@@ -51,7 +51,6 @@ class WebViewViewModel @Inject constructor(
         // TODO
     }
 
-
     fun onEvent(event: WebViewEvent) {
         when (event) {
             WebViewEvent.LoadPage -> {

@@ -35,9 +35,11 @@ fun PreviewScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.Black)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black),
+    ) {
         PreviewImage(imagePath)
         CloseButton(
             onClick = {

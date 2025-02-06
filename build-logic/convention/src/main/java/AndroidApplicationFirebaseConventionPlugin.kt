@@ -1,4 +1,4 @@
-//import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+// import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import com.nexters.misik.convention.extension.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project

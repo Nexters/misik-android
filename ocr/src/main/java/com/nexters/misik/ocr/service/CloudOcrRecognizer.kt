@@ -38,7 +38,7 @@ class CloudOcrRecognizer @Inject constructor(
                     .await()
             }
 
-            return ocrResult(response) //OcrResult(text = "Success", blocks = emptyList())
+            return ocrResult(response) // OcrResult(text = "Success", blocks = emptyList())
         } catch (e: Exception) {
             Timber.e(e)
             return OcrResult(text = "Error: ${e.localizedMessage}", blocks = emptyList())
