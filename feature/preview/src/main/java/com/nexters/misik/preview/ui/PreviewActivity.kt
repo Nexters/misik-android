@@ -17,10 +17,10 @@ class PreviewActivity : ComponentActivity() {
         val imageUri = intent.getStringExtra("imageUri")
         imageUri?.let {
             viewModel.handleIntent(PreviewIntent.LoadImage(it))
-        }
 
-        setContent {
-            PreviewScreen(viewModel)
+            setContent {
+                PreviewScreen(viewModel, imageUri)
+            }
         }
     }
 }

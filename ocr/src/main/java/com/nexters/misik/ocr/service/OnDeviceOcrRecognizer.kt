@@ -5,7 +5,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
 import com.nexters.misik.ocr.model.OcrResult
-import com.nexters.misik.ocr.util.BitmapUtils.scaleBitmapDown
+import com.nexters.misik.ocr.util.BitmapUtils.preprocessImage
 import jakarta.inject.Inject
 import timber.log.Timber
 import kotlin.coroutines.resume
@@ -18,7 +18,7 @@ class OnDeviceOcrRecognizer @Inject constructor() : OcrRecognizer {
 
     override suspend fun recognizeText(imagePath: String): OcrResult {
         val bitmap = BitmapFactory.decodeFile(imagePath)
-        val resizedBitmap = scaleBitmapDown(bitmap, 640)
+        val resizedBitmap = preprocessImage(bitmap)
         val inputImage = InputImage.fromBitmap(resizedBitmap, 0)
 
         return suspendCoroutine { continuation ->

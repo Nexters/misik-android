@@ -1,16 +1,19 @@
 package com.nexters.misik.preview.util
 
 import android.app.Activity
-import android.graphics.Bitmap
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
-import androidx.activity.result.contract.ActivityResultContracts.TakePicturePreview
+import com.nexters.misik.preview.util.ImageStorageUtil.createImageUri
+import com.nexters.misik.preview.util.ImageStorageUtil.getCameraImagePath
 
 class ImageHandler {
     private lateinit var activity: Activity
     private lateinit var galleryLauncher: ActivityResultLauncher<String>
-    private lateinit var cameraLauncher: ActivityResultLauncher<Void?>
+    private lateinit var cameraLauncher: ActivityResultLauncher<Uri>
+    private lateinit var cameraUri: Uri
 
     fun init(activity: ComponentActivity) {
         this.activity = activity
@@ -25,10 +28,13 @@ class ImageHandler {
         }
 
         // 카메라 실행
-        this.cameraLauncher =
-            activity.registerForActivityResult(TakePicturePreview()) { bitmap: Bitmap? ->
-                bitmap?.let {
-                    startPreviewActivity(ImageStorageUtil.saveBitmapToFile(activity, it))
+        this.cameraUri = createImageUri(activity)
+        cameraLauncher =
+            activity.registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+                if (success) {
+                    getCameraImagePath(activity, cameraUri)?.let { fallbackPath ->
+                        startPreviewActivity(fallbackPath)
+                    }
                 }
             }
     }
@@ -38,7 +44,7 @@ class ImageHandler {
     }
 
     fun openCamera() {
-        cameraLauncher.launch(null)
+        cameraLauncher.launch(cameraUri)
     }
 
     private fun startPreviewActivity(imageUri: String) {

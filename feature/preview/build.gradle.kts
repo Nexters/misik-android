@@ -34,6 +34,7 @@ android {
 
 dependencies {
     implementation(projects.domain)
+    implementation(projects.ocr)
     implementation(libs.timber)
     implementation(libs.coil.compose)
 
