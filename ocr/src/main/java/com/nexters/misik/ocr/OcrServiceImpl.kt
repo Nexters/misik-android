@@ -12,7 +12,7 @@ class OcrServiceImpl @Inject constructor(
     private val onDeviceOcrService: OnDeviceOcrRecognizer,
     private val cloudOcrService: CloudOcrRecognizer,
 ) : OcrService {
-    private val useCloud = false
+    private val useCloud = true
 
     override suspend fun extractText(imagePath: String): String {
         Timber.plant(Timber.DebugTree())

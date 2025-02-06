@@ -1,8 +1,17 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.misik.android.library)
     alias(libs.plugins.misik.android.hilt)
     alias(libs.plugins.misik.plugin.build.config)
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 
 android {
@@ -16,6 +25,16 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         manifestPlaceholders["mlkit_vision_dependencies"] =
             "ocr,ocr_korean"
+        resValue(
+            "string",
+            "cloud_vision_api_key",
+            localProperties.getProperty("CLOUD_VISION_API_KEY", ""),
+        )
+        buildConfigField(
+            "String",
+            "CLOUD_VISION_API_KEY",
+            "\"${localProperties.getProperty("CLOUD_VISION_API_KEY", "")}\"",
+        )
     }
 
     buildTypes {
