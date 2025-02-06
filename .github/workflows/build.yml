@@ -29,9 +29,16 @@ jobs:
       # 1.1 Setup google-services.json
       - name: Setup google-services.json
         run: |
-          mkdir -p app/src/debug
-          cp app/google-services.json app/src/debug/google-services.json
-          cp app/google-services.json app/src/google-services.json
+          echo "Setting up google-services.json..."
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
+          if [ -f ./app/google-services.json ]; then
+            echo "google-services.json successfully created at ./app/google-services.json"
+            echo "File content:"
+            cat ./app/google-services.json
+          else
+            echo "Error: google-services.json not found at ./app/google-services.json"
+            exit 1
+          fi
         shell: bash
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
