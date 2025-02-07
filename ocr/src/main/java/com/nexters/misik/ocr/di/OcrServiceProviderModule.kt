@@ -1,8 +1,5 @@
 package com.nexters.misik.ocr.di
 
-import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.ktx.functions
-import com.google.firebase.ktx.Firebase
 import com.nexters.misik.ocr.OcrServiceImpl
 import com.nexters.misik.ocr.service.CloudOcrRecognizer
 import com.nexters.misik.ocr.service.OnDeviceOcrRecognizer
@@ -33,13 +30,7 @@ object OcrServiceProviderModule {
 
     @Provides
     @Singleton
-    fun provideCloudOcrService(firebaseFunctions: FirebaseFunctions): CloudOcrRecognizer {
-        return CloudOcrRecognizer(firebaseFunctions)
-    }
-
-    @Provides
-    @Singleton
-    fun provideFirebaseFunctions(): FirebaseFunctions {
-        return Firebase.functions
+    fun provideCloudOcrService(): CloudOcrRecognizer {
+        return CloudOcrRecognizer()
     }
 }

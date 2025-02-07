@@ -64,7 +64,6 @@ dependencies {
     implementation(libs.play.services.mlkit.text.recognition.korean)
 
     implementation(libs.mlkit.text.recognition)
-    implementation(libs.firebase.functions)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
