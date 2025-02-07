@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
-import com.nexters.misik.webview.common.PreviewLoadingAnimation
+import com.nexters.misik.preview.ui.common.PreviewLoadingAnimation
 import kotlinx.coroutines.delay
 import java.io.File
 

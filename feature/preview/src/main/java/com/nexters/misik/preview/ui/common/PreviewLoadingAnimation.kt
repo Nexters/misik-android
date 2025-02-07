@@ -1,4 +1,4 @@
-package com.nexters.misik.webview.common
+package com.nexters.misik.preview.ui.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
