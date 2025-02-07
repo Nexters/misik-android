@@ -13,6 +13,27 @@ data class OcrParsedResponse(
                 ),
             )
         }
+
+        fun createMockStr(): String {
+            return """
+                {
+                    "parsed": [
+                        {
+                            "key": "품명",
+                            "value": "카야토스트+음료세트"
+                        },
+                        {
+                            "key": "품명",
+                            "value": "아메리카노"
+                        },
+                        {
+                            "key": "품명",
+                            "value": "샌드위치"
+                        }
+                    ]
+                }
+            """.trimIndent()
+        }
     }
 }
 

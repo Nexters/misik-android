@@ -2,7 +2,6 @@ package com.nexters.misik.webview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nexters.misik.domain.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,16 +23,6 @@ class WebViewViewModel @Inject constructor(
 
     fun sendIntent(intent: WebViewIntent) {
         when (intent) {
-            is WebViewIntent.OpenCamera -> {
-                Timber.d("WebViewIntent: OpenCamera")
-                // 카메라 실행 로직 (UI 이벤트 발생 가능)
-            }
-
-            is WebViewIntent.OpenGallery -> {
-                Timber.d("WebViewIntent: OpenGallery")
-                // 갤러리 실행 로직 (UI 이벤트 발생 가능)
-            }
-
             is WebViewIntent.Share -> {
                 Timber.d("WebViewIntent: Share -> ${intent.content}")
                 // 공유 기능 실행
@@ -53,6 +42,10 @@ class WebViewViewModel @Inject constructor(
                 Timber.d("WebViewIntent: HandleOcrResult -> ${intent.ocrText}")
                 intent.ocrText?.let { parsingOcr(intent.ocrText) }
             }
+
+            else -> {
+                Timber.d("WebViewIntent: else")
+            }
         }
     }
 
@@ -61,6 +54,7 @@ class WebViewViewModel @Inject constructor(
     }
 
     fun onEvent(event: WebViewEvent) {
+        Timber.i("onEvent: $event")
         when (event) {
             WebViewEvent.LoadPage -> {
                 _state.value = WebViewState.PageLoading
@@ -85,9 +79,7 @@ class WebViewViewModel @Inject constructor(
             reviewRepository.getOcrParsedResponse(ocrText)
                 .onSuccess { data ->
                     if (data != null) {
-                        _state.update {
-                            it.copy(ocrParsedItems = data)
-                        }
+                        _responseJs.value = makeResponse("receiveScanResult", data)
                         Timber.d("parsingOcr_Success", data.toString())
                     }
                 }
@@ -95,12 +87,10 @@ class WebViewViewModel @Inject constructor(
                     Timber.d("parsingOcr_Failure", exception.message)
                 }
         }
-        // API 요청
+    }
 
-        // API 응답
-
-        // WebView로 전달
-
+    private fun makeResponse(functionName: String, response: String): String {
+        return "javascript:window.$functionName('$response')"
     }
 
     private fun generateReview(intent: WebViewIntent.CreateReview) {

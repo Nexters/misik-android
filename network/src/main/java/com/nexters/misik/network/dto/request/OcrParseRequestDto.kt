@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OcrParseRequestDto(
-    @SerialName("ocrText")
-    val ocrText: String,
+    @SerialName("text")
+    val text: String,
 ) 

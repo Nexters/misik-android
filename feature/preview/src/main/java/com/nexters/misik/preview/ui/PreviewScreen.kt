@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -26,12 +26,15 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.nexters.misik.webview.common.PreviewLoadingAnimation
+import kotlinx.coroutines.delay
 import java.io.File
 
 @Composable
 fun PreviewScreen(
     viewModel: PreviewViewModel,
     imagePath: String,
+    onClose: (String?) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -43,7 +46,7 @@ fun PreviewScreen(
         PreviewImage(imagePath)
         CloseButton(
             onClick = {
-                // TODO 닫기 버튼 클릭 시
+                onClose(null)
             },
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -62,10 +65,15 @@ fun PreviewScreen(
                         color = Color.White,
                     )
                 }
+                // 2초 후 onClose 호출
+                LaunchedEffect(Unit) {
+                    delay(2000)
+                    onClose(viewModel.extractedText.value ?: "")
+                }
             }
 
             is PreviewState.Loading -> {
-                CircularProgressIndicator(
+                PreviewLoadingAnimation(
                     modifier = Modifier
                         .size(48.dp)
                         .align(Alignment.Center),

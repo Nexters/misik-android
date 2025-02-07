@@ -1,5 +1,6 @@
 package com.nexters.misik.network
 
+import com.hyeseon.misik.network.BuildConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -80,7 +81,7 @@ object NetworkModule {
         @Logging client: OkHttpClient,
         converterFactory: Converter.Factory,
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(com.hyeseon.misik.network.BuildConfig.BASE_URL)
+        .baseUrl(BuildConfig.NETWORK_BASE_URL)
         .client(client)
         .addConverterFactory(converterFactory)
         .build()

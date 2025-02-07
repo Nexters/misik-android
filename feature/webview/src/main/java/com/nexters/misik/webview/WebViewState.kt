@@ -11,7 +11,6 @@ package com.nexters.misik.webview
 sealed class WebViewState {
     data object PageLoading : WebViewState()
     data object PageLoaded : WebViewState()
-
-    //    data class ResponseJS(val response: String) : WebViewState()
+    data class ResponseJS(val response: String) : WebViewState()
     data class Error(val message: String) : WebViewState()
 }
