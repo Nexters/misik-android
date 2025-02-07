@@ -2,7 +2,7 @@ package com.nexters.misik.data.mapper
 
 import com.nexters.misik.data.model.Review
 import com.nexters.misik.domain.ReviewEntity
-import com.nexters.misik.network.dto.GetReviewResponseDto
+import com.nexters.misik.network.dto.response.GetReviewResponseDto
 
 object ReviewMapper {
     fun GetReviewResponseDto.toModel(): Review {

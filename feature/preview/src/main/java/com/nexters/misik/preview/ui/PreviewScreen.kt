@@ -52,11 +52,16 @@ fun PreviewScreen(
 
         when (state) {
             is PreviewState.Success -> {
-                Text(
-                    text = viewModel.extractedText.value ?: "",
-                    color = Color.White,
-                    modifier = Modifier.padding(16.dp),
-                )
+                Box(
+                    modifier = Modifier
+                        .background(Color.Black.copy(alpha = 0.8f))
+                        .padding(16.dp),
+                ) {
+                    Text(
+                        text = viewModel.extractedText.value ?: "",
+                        color = Color.White,
+                    )
+                }
             }
 
             is PreviewState.Loading -> {

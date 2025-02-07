@@ -30,8 +30,17 @@ fun WebViewScreen(
     val webInterface = remember {
         WebInterface { intent ->
             when (intent) {
-                is WebViewIntent.OpenCamera -> previewService.openCamera()
-                is WebViewIntent.OpenGallery -> previewService.openGallery()
+                is WebViewIntent.OpenCamera -> previewService.openCamera(
+                    {
+                        viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
+                    },
+                )
+
+                is WebViewIntent.OpenGallery -> previewService.openGallery(
+                    {
+                        viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
+                    },
+                )
                 else -> viewModel.sendIntent(intent)
             }
         }
@@ -43,7 +52,7 @@ fun WebViewScreen(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        if (uiState.isLoading) {
+        if (uiState == WebViewState.PageLoading) {
             Timber.d("WebViewScreen_UiState", "Loading")
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else {

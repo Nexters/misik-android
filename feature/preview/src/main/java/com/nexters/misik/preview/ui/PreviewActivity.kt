@@ -23,4 +23,8 @@ class PreviewActivity : ComponentActivity() {
             }
         }
     }
+
+    companion object {
+        const val PREVIEW_REQUEST_CODE = 100
+    }
 }

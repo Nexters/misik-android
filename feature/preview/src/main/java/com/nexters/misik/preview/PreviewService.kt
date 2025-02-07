@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.activity.ComponentActivity
 import com.nexters.misik.preview.ui.PreviewActivity
 import com.nexters.misik.preview.util.ImageHandler
+import com.nexters.misik.preview.util.MediaType
 import com.nexters.misik.preview.util.PermissionHandler
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -23,14 +24,14 @@ class PreviewService @Inject constructor(
         imageHandlerUtil.init(activity) // 이미지 처리 초기화
     }
 
-    fun openGallery() {
-        imageHandlerUtil.openGallery()
+    fun openGallery(callback: (String?) -> Unit) {
+        imageHandlerUtil.openMedia(MediaType.GALLERY, callback)
     }
 
-    fun openCamera() {
+    fun openCamera(callback: (String?) -> Unit) {
         permissionHandler.requestPermission(
             Manifest.permission.CAMERA,
-            onGranted = { imageHandlerUtil.openCamera() },
+            onGranted = { imageHandlerUtil.openMedia(MediaType.CAMERA, callback) },
         )
     }
 

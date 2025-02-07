@@ -1,19 +1,25 @@
 package com.nexters.misik.preview.util
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import com.nexters.misik.preview.ui.PreviewActivity.Companion.PREVIEW_REQUEST_CODE
 import com.nexters.misik.preview.util.ImageStorageUtil.createImageUri
 import com.nexters.misik.preview.util.ImageStorageUtil.getCameraImagePath
+
+enum class MediaType { CAMERA, GALLERY }
 
 class ImageHandler {
     private lateinit var activity: Activity
     private lateinit var galleryLauncher: ActivityResultLauncher<String>
     private lateinit var cameraLauncher: ActivityResultLauncher<Uri>
+    private lateinit var previewResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraUri: Uri
+    private var callback: ((String?) -> Unit)? = null
 
     fun init(activity: ComponentActivity) {
         this.activity = activity
@@ -37,13 +43,33 @@ class ImageHandler {
                     }
                 }
             }
+
+        // PreviewActivity 결과 받기
+        this.previewResultLauncher = activity.registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val imageUri = result.data?.getStringExtra("imageUri")
+                callback?.invoke(imageUri)  // 콜백 실행
+            } else {
+                callback?.invoke(null)  // 실패 시 null 전달
+            }
+        }
     }
 
-    fun openGallery() {
+    fun openMedia(type: MediaType, callback: (String?) -> Unit) {
+        this.callback = callback
+        when (type) {
+            MediaType.GALLERY -> openGallery()
+            MediaType.CAMERA -> openCamera()
+        }
+    }
+
+    private fun openGallery() {
         galleryLauncher.launch("image/*")
     }
 
-    fun openCamera() {
+    private fun openCamera() {
         cameraLauncher.launch(cameraUri)
     }
 
@@ -55,6 +81,6 @@ class ImageHandler {
         ).apply {
             putExtra("imageUri", imageUri)
         }
-        activity.startActivity(intent)
+        activity.startActivityForResult(intent, PREVIEW_REQUEST_CODE)
     }
 }
