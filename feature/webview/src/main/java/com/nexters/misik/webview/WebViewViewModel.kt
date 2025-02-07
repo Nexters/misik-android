@@ -20,7 +20,6 @@ class WebViewViewModel @Inject constructor(
     private val _responseJs = MutableStateFlow<String?>(null)
     val responseJs: StateFlow<String?> = _responseJs
 
-
     fun sendIntent(intent: WebViewIntent) {
         when (intent) {
             is WebViewIntent.Share -> {

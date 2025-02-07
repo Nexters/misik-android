@@ -50,9 +50,9 @@ class ImageHandler {
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val ocrText = result.data?.getStringExtra("imageUri")
-                callback?.invoke(ocrText)  // 콜백 실행
+                callback?.invoke(ocrText) // 콜백 실행
             } else {
-                callback?.invoke(null)  // 실패 시 null 전달
+                callback?.invoke(null) // 실패 시 null 전달
             }
         }
     }
