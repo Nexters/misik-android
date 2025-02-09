@@ -39,6 +39,30 @@ jobs:
       - name: Accept licenses
         run: yes | sdkmanager --licenses || true
 
+      # 6. Add Local Properties
+      - name: Add Local Properties
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          CLOUD_VISION_API_KEY: ${{ secrets.CLOUD_VISION_API_KEY }}
+        run: |
+          echo base.url=\"$BASE_URL\" >> ./local.properties
+          echo cloud.vision.api.key=\"$CLOUD_VISION_API_KEY\" >> ./local.properties
+
+      # 7. Setup google-services.json
+      - name: Setup google-services.json
+        run: |
+          echo "Setting up google-services.json..."
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
+          if [ -f ./app/google-services.json ]; then
+            echo "google-services.json successfully created at ./app/google-services.json"
+          else
+            echo "Error: google-services.json not found at ./app/google-services.json"
+            exit 1
+          fi
+        shell: bash
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+
       - name: Get Tag Name and Message
         id: tag_info
         run: |
@@ -47,7 +71,7 @@ jobs:
           TAG_MESSAGE_SANITIZED=$(echo "$TAG_MESSAGE" | tr -d '\n' | tr -d '\r')
           echo "TAG_MESSAGE=$TAG_MESSAGE_SANITIZED" >> $GITHUB_ENV
 
-      # 6. Build release APK
+      # 8. Build release APK
       - name: Build APK
         run: ./gradlew assembleDebug
 

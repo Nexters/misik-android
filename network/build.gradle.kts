@@ -12,6 +12,9 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    defaultConfig {
+        buildConfigField("String", "NETWORK_BASE_URL", "\"https://api.misik.me/\"")
+    }
 }
 
 dependencies {

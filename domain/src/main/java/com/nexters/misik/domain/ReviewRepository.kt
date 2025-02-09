@@ -6,4 +6,6 @@ interface ReviewRepository {
 
     // 리뷰 조회
     suspend fun getReview(id: Long): Result<ReviewEntity?>
+
+    suspend fun getOcrParsedResponse(text: String): Result<String>
 }

@@ -1,8 +1,10 @@
-
 [versions]
 # SDK Versions
+coilGif = "2.4.0"
 compileSdk = "35"
 minSdk = "28"
+playServicesMlkitTextRecognition = "19.0.1"
+playServicesMlkitTextRecognitionKorean = "16.0.1"
 targetSdk = "35"
 jdkVersion = "17"
 
@@ -84,6 +86,13 @@ process-pheonix = "3.0.0"
 preference = "1.2.1"
 spotless = "6.21.0"
 
+#ocr
+mlkit-text = "16.0.1"
+firebaseFunctions = "21.1.0"
+
+# gson
+gson = "2.10.1"
+
 [plugins]
 # Gradle Plugins
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
@@ -95,7 +104,8 @@ android-application = { id = "com.android.application", version.ref = "android-g
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-google-service = { id = "com.google.gms.google-services", version.ref = "google-service" }
+gms = { id = "com.google.gms.google-services", version.ref = "google-service" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "androidx-navigation" }
 android-test = { id = "com.android.test", version.ref = "android-gradle-plugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
@@ -103,20 +113,23 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 # Custom Plugins
 misik-application = { id = "misik.android.application", version = "unspecified" }
-misik-android-application-compose = { id = "misik.android.application.compose", version = "unspecified"}
+misik-android-application-compose = { id = "misik.android.application.compose", version = "unspecified" }
 misik-android-library = { id = "misik.android.library", version = "unspecified" }
 misik-android-compose-library = { id = "misik.android.compose.library", version = "unspecified" }
-misik-android-hilt = { id = "misik.android.hilt", version = "unspecified"}
+misik-android-hilt = { id = "misik.android.hilt", version = "unspecified" }
 misik-java-library = { id = "misik.java.library", version = "unspecified" }
 misik-feature = { id = "misik.feature", version = "unspecified" }
 misik-data = { id = "misik.data", version = "unspecified" }
 misik-plugin-android-test = { id = "misik.plugin.android.test", version = "unspecified" }
 misik-plugin-test = { id = "misik.plugin.test", version = "unspecified" }
 misik-plugin-build-config = { id = "misik.plugin.build.config", version = "unspecified" }
+misik-android-application-firebase = { id = "misik.android.application.firebase" }
+
 
 [libraries]
 # Android Gradle Plugin
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle-plugin" }
+coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilGif" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradle-plugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
@@ -131,7 +144,7 @@ kotlinx-collections = { group = "org.jetbrains.kotlinx", name = "kotlinx-collect
 # Testing Libraries
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
-robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric"}
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-test-runner" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test" }
@@ -184,7 +197,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
 hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
 hilt-testing-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
-javax-inject = {group = "javax.inject", name = "javax.inject", version.ref = "javax" }
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javax" }
 
 # Orbit
 orbit-core = { group = "org.orbit-mvi", name = "orbit-core", version.ref = "orbit" }
@@ -224,6 +237,16 @@ jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 kakao-login = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao-login" }
 process-phoenix = { module = "com.jakewharton:process-phoenix", version.ref = "process-pheonix" }
 
+# OCR
+mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkit-text" }
+play-services-mlkit-text-recognition = { module = "com.google.android.gms:play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" }
+play-services-mlkit-text-recognition-korean = { module = "com.google.android.gms:play-services-mlkit-text-recognition-korean", version.ref = "playServicesMlkitTextRecognitionKorean" }
+firebase-functions = { module = "com.google.firebase:firebase-functions", version.ref = "firebaseFunctions" }
+
+# gson
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+
 [bundles]
 firebase = ["firebase-analytics", "firebase-database", "firebase-messaging", "firebase-remoteConfig"]
 androidx-lifecycle = ["androidx-lifecycle-runtime-ktx", "androidx-lifecycle-viewmodel-ktx"]
@@ -232,6 +255,6 @@ coroutine = ["kotlinx-coroutines-android", "kotlinx-coroutines-core"]
 datastore = ["androidx-datastore-core", "androidx-datastore-preferences"]
 compose = ["ui", "ui-graphics", "ui-tooling-preview", "material3-compose", "coil-compose", "ui-foundation", "activity-compose", "lifecycle-compose", "navigation-compose", "hilt-navigation-compose"]
 compose-debug = ["ui-tooling", "ui-test-manifest"]
-media3 = ["androidx-media3-exoplayer", "androidx-media3-exoplayer-dash", "androidx-media3-ui" ]
+media3 = ["androidx-media3-exoplayer", "androidx-media3-exoplayer-dash", "androidx-media3-ui"]
 
 orbit = ["orbit-core", "orbit-viewmodel", "orbit-compose"]

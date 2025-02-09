@@ -8,22 +8,31 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.nexters.misik.preview.PreviewService
+import com.nexters.misik.preview.di.PreviewEntryPoint
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import dagger.hilt.android.EntryPointAccessors
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var webAppInterface: WebInterface
+    private lateinit var previewService: PreviewService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        previewService = EntryPointAccessors.fromActivity(this, PreviewEntryPoint::class.java)
+            .previewService()
+
+        previewService.init(this)
+
         setContent {
             Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                WebViewScreen(webAppInterface = webAppInterface, modifier = Modifier.padding(innerPadding))
+                WebViewScreen(
+                    previewService,
+                    modifier = Modifier.padding(innerPadding),
+                )
             }
         }
     }

@@ -31,3 +31,7 @@ include(":feature:webview")
 include(":network")
 
 gradle.startParameter.excludedTaskNames.addAll(listOf(":build-logic:convention:testClasses"))
+include(":ocr")
+include(":feature:preview")
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

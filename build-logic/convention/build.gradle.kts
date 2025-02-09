@@ -69,5 +69,10 @@ gradlePlugin {
             id = "misik.plugin.android.test"
             implementationClass = "AndroidTestPlugin"
         }
+
+        register("androidFirebase") {
+            id = libs.plugins.misik.android.application.firebase.get().pluginId
+            implementationClass = "AndroidApplicationFirebaseConventionPlugin"
+        }
     }
 }
