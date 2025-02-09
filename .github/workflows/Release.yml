@@ -43,8 +43,10 @@ jobs:
       - name: Add Local Properties
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
+          CLOUD_VISION_API_KEY: ${{ secrets.CLOUD_VISION_API_KEY }}
         run: |
           echo base.url=\"$BASE_URL\" >> ./local.properties
+          echo cloud.vision.api.key=\"$CLOUD_VISION_API_KEY\" >> ./local.properties
 
       # 7. Setup google-services.json
       - name: Setup google-services.json
