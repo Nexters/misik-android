@@ -76,14 +76,17 @@ class WebViewViewModel @Inject constructor(
 
     private fun parsingOcr(ocrText: String) {
         viewModelScope.launch {
+            _state.value = WebViewState.PageLoading
             reviewRepository.getOcrParsedResponse(ocrText)
                 .onSuccess { data ->
                     if (data != null) {
                         _responseJs.value = makeResponse("receiveScanResult", data)
                         Timber.d("parsingOcr_Success", data.toString())
                     }
+                    _state.value = WebViewState.PageLoaded
                 }
                 .onFailure { exception ->
+                    _state.value = WebViewState.PageLoaded
                     Timber.d("parsingOcr_Failure", exception.message)
                 }
         }
