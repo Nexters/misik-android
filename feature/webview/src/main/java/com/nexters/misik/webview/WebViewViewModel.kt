@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -89,7 +90,12 @@ class WebViewViewModel @Inject constructor(
     }
 
     private fun makeResponse(functionName: String, response: String): String {
-        return "javascript:window.$functionName('$response')"
+        val escapedResponse = JSONObject.quote(response)
+        return ("javascript:window.response.$functionName('$escapedResponse')").apply {
+            Timber.i(
+                this,
+            )
+        }
     }
 
     private fun generateReview(intent: WebViewIntent.CreateReview) {

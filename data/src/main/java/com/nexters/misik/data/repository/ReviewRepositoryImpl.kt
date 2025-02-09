@@ -7,6 +7,7 @@ import com.nexters.misik.domain.ReviewRepository
 import com.nexters.misik.network.dto.request.GenerateReviewRequestDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 
 class ReviewRepositoryImpl @Inject constructor(
@@ -30,10 +31,10 @@ class ReviewRepositoryImpl @Inject constructor(
         remoteDataSource.getReview(id).toDomain()
     }
 
-    override suspend fun getOcrParsedResponse(text: String): Result<String?> = runCatching {
+    override suspend fun getOcrParsedResponse(text: String): Result<String> = runCatching {
         withContext(Dispatchers.IO) {
             remoteDataSource.getOcrParsedResponse(text)
-//            OcrParsedResponse.createMockStr()
+                ?: throw IOException("Failed to fetch OCR response")
         }
     }
 }

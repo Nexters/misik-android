@@ -146,7 +146,6 @@ class CloudOcrRecognizer : OcrRecognizer {
 
             Timber.d("Response Code: ${connection.responseCode}, Message: ${connection.responseMessage}")
             val response = connection.inputStream.bufferedReader().use { it.readText() }
-            Timber.i("Raw Response: $response")
 
             return com.google.gson.JsonParser.parseString(response).asJsonObject
         } catch (e: Exception) {
