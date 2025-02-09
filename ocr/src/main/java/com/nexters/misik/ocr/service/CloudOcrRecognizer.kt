@@ -7,6 +7,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.nexters.misik.ocr.BuildConfig
+import com.nexters.misik.ocr.exception.CloudOcrException
 import com.nexters.misik.ocr.model.OcrResult
 import com.nexters.misik.ocr.util.BitmapUtils.preprocessImage
 import kotlinx.coroutines.Dispatchers
@@ -43,9 +44,10 @@ class CloudOcrRecognizer : OcrRecognizer {
 
                 Timber.i("Recognized Text: $recognizedText")
                 OcrResult(text = recognizedText, blocks = listOf(recognizedText))
+            } catch (e: IllegalArgumentException) {
+                throw CloudOcrException("File not found: $imagePath", e)
             } catch (e: Exception) {
-                Timber.e(e, "OCR processing failed")
-                OcrResult(text = "Error: ${e.localizedMessage}", blocks = emptyList())
+                throw CloudOcrException("OCR processing failed", e)
             }
         }
     }
@@ -57,20 +59,24 @@ class CloudOcrRecognizer : OcrRecognizer {
         val file = File(imagePath)
 
         if (!file.exists()) {
-            Timber.e("File not found: $imagePath")
-            throw IllegalArgumentException("File does not exist at path: $imagePath")
+            throw CloudOcrException(
+                "File does not exist at path: $imagePath",
+                IllegalArgumentException(),
+            )
         }
 
-        // Bitmap 로드 및 전처리 (흑백 + 리사이징 + 대비 조정)
-        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-        val processedBitmap = preprocessImage(bitmap)
+        return try {
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+            val processedBitmap = preprocessImage(bitmap)
 
-        // Bitmap을 Base64로 변환
-        val outputStream = ByteArrayOutputStream()
-        processedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        val imageBytes: ByteArray = outputStream.toByteArray()
+            val outputStream = ByteArrayOutputStream()
+            processedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            val imageBytes: ByteArray = outputStream.toByteArray()
 
-        return Base64.encodeToString(imageBytes, Base64.NO_WRAP)
+            Base64.encodeToString(imageBytes, Base64.NO_WRAP)
+        } catch (e: Exception) {
+            throw CloudOcrException("Base64 encoding failed", e)
+        }
     }
 
     /**
@@ -130,6 +136,7 @@ class CloudOcrRecognizer : OcrRecognizer {
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
         connection.setRequestProperty("Content-Type", "application/json")
+        connection.setRequestProperty("User-Agent", "Android/com.nexters.misik")
         connection.doOutput = true
 
         try {
@@ -137,14 +144,13 @@ class CloudOcrRecognizer : OcrRecognizer {
             connection.outputStream.write(requestJson.toByteArray(Charsets.UTF_8))
             connection.outputStream.flush()
 
-            Timber.d("Response Code: ${connection.responseCode}")
+            Timber.d("Response Code: ${connection.responseCode}, Message: ${connection.responseMessage}")
             val response = connection.inputStream.bufferedReader().use { it.readText() }
-            Timber.d("Raw Response: $response")
+            Timber.i("Raw Response: $response")
 
             return com.google.gson.JsonParser.parseString(response).asJsonObject
         } catch (e: Exception) {
-            Timber.e(e, "OCR request failed")
-            throw e
+            throw CloudOcrException("OCR request failed", e)
         } finally {
             connection.disconnect()
         }
