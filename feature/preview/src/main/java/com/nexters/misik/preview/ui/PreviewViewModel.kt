@@ -39,7 +39,10 @@ class PreviewViewModel @Inject constructor(
             try {
                 val extractedText = ocrService.extractText(imagePath)
                 _extractedText.value = extractedText
-                _state.value = PreviewState.Success(previewImagePath = imagePath)
+                _state.value = PreviewState.Success(
+                    previewImagePath = imagePath,
+                    extractedText = extractedText,
+                )
             } catch (e: Exception) {
                 _state.value = PreviewState.Error(message = "OCR error: ${e.message}")
             }

@@ -3,108 +3,155 @@ package com.nexters.misik.ocr.service
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import com.google.android.gms.tasks.Task
-import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.HttpsCallableResult
-import com.google.gson.Gson
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
+import com.nexters.misik.ocr.BuildConfig
+import com.nexters.misik.ocr.exception.CloudOcrException
 import com.nexters.misik.ocr.model.OcrResult
-import com.nexters.misik.ocr.util.BitmapUtils.scaleBitmapDown
-import jakarta.inject.Inject
+import com.nexters.misik.ocr.util.BitmapUtils.preprocessImage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
 
-class CloudOcrRecognizer @Inject constructor(
-    private val firebaseFunctions: FirebaseFunctions,
-) : OcrRecognizer {
+class CloudOcrRecognizer : OcrRecognizer {
 
     override suspend fun recognizeText(imagePath: String): OcrResult {
-        try {
-            val base64Image = encodeToBase64(imagePath)
-            val requestJson = createCloudVisionRequest(base64Image)
+        return withContext(Dispatchers.IO) {
+            try {
+                Timber.d("Processing image: $imagePath")
 
-            val response: HttpsCallableResult = withContext(Dispatchers.IO) {
-                firebaseFunctions
-                    .getHttpsCallable("annotateImage")
-                    .call(requestJson)
-                    .await()
+                // Bitmap 로드 및 전처리
+                val base64Image = encodeToBase64(imagePath)
+                Timber.d("Base64 encoding completed.")
+
+                // 요청 JSON 생성
+                val requestJson = createCloudVisionRequest(base64Image)
+                Timber.d("Generated OCR request: $requestJson")
+
+                // Google Vision API 요청 전송
+                val responseJson = sendOcrRequest(requestJson)
+                Timber.d("Response JSON: $responseJson")
+
+                // OCR 결과 추출
+                val recognizedText = responseJson["responses"]
+                    .asJsonArray[0].asJsonObject["fullTextAnnotation"]
+                    ?.asJsonObject?.get("text")?.asString ?: "No Text Found"
+
+                Timber.i("Recognized Text: $recognizedText")
+                OcrResult(text = recognizedText, blocks = listOf(recognizedText))
+            } catch (e: IllegalArgumentException) {
+                throw CloudOcrException("File not found: $imagePath", e)
+            } catch (e: Exception) {
+                throw CloudOcrException("OCR processing failed", e)
             }
-
-            return ocrResult(response) // OcrResult(text = "Success", blocks = emptyList())
-        } catch (e: Exception) {
-            Timber.e(e)
-            return OcrResult(text = "Error: ${e.localizedMessage}", blocks = emptyList())
         }
     }
 
-    private fun ocrResult(response: HttpsCallableResult): OcrResult {
-        val resultJson = response.getData() as Map<*, *>
-        Timber.i("Response JSON: $resultJson")
-        val recognizedText = resultJson["textAnnotations"]?.toString() ?: "No Text Found"
-        Timber.i("Recognized Text: $recognizedText")
-//        val jsonResponse = JsonParser.parseString(response.getData().toString()).asJsonObject
-//        val recognizedText = jsonResponse["fullTextAnnotation"].asJsonObject["text"].asString
-        return OcrResult(text = recognizedText, blocks = listOf(recognizedText))
-    }
-
-    private fun annotateImage(requestJson: String): Task<JsonElement> {
-        return firebaseFunctions
-            .getHttpsCallable("annotateImage")
-            .call(requestJson)
-            .continueWith { task ->
-                // This continuation runs on either success or failure, but if the task
-                // has failed then result will throw an Exception which will be
-                // propagated down.
-                val result = task.result?.getData() as Map<*, *>
-                val recognizedText = result["textAnnotations"]?.toString() ?: "No Text Found"
-                Timber.i("Recognized Text: $recognizedText")
-                JsonParser.parseString(Gson().toJson(result))
-            }
-    }
-
-    private fun createCloudVisionRequest(base64Image: String): String {
-        val request = JsonObject()
-
-        // 이미지 데이터를 추가
-        val image = JsonObject()
-        image.add("content", JsonPrimitive(base64Image))
-        request.add("image", image)
-
-        // OCR 요청 유형 (TEXT_DETECTION 또는 DOCUMENT_TEXT_DETECTION)
-        val feature = JsonObject()
-        feature.add("type", JsonPrimitive("TEXT_DETECTION"))
-
-        val features = JsonArray()
-        features.add(feature)
-        request.add("features", features)
-
-        // (선택 사항) 언어 힌트 추가
-        val imageContext = JsonObject()
-        val languageHints = JsonArray()
-        languageHints.add("ko")
-        languageHints.add("en") // 영어 OCR
-        imageContext.add("languageHints", languageHints)
-        request.add("imageContext", imageContext)
-
-        return request.toString()
-    }
-
+    /**
+     * **Base64 인코딩 함수 (이미지 전처리 적용)**
+     */
     private fun encodeToBase64(imagePath: String): String {
         val file = File(imagePath)
-        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-        val resizedBitmap = scaleBitmapDown(bitmap, 640)
 
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(imageBytes, Base64.NO_WRAP)
+        if (!file.exists()) {
+            throw CloudOcrException(
+                "File does not exist at path: $imagePath",
+                IllegalArgumentException(),
+            )
+        }
+
+        return try {
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+            val processedBitmap = preprocessImage(bitmap)
+
+            val outputStream = ByteArrayOutputStream()
+            processedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            val imageBytes: ByteArray = outputStream.toByteArray()
+
+            Base64.encodeToString(imageBytes, Base64.NO_WRAP)
+        } catch (e: Exception) {
+            throw CloudOcrException("Base64 encoding failed", e)
+        }
+    }
+
+    /**
+     * **Google Vision API 요청 JSON 생성**
+     */
+    private fun createCloudVisionRequest(base64Image: String): String {
+        val requestObject = JsonObject().apply {
+            add(
+                "image",
+                JsonObject().apply {
+                    addProperty("content", base64Image)
+                },
+            )
+            add(
+                "features",
+                JsonArray().apply {
+                    add(
+                        JsonObject().apply {
+                            addProperty("type", "TEXT_DETECTION")
+                            addProperty("maxResults", 10) // 결과 개수 지정 (선택 사항)
+                        },
+                    )
+                },
+            )
+            add(
+                "imageContext",
+                JsonObject().apply {
+                    add(
+                        "languageHints",
+                        JsonArray().apply {
+                            add(JsonPrimitive("ko")) // 한글 OCR
+                            add(JsonPrimitive("en")) // 영어 OCR
+                        },
+                    )
+                },
+            )
+        }
+
+        val requestBody = JsonObject().apply {
+            add(
+                "requests",
+                JsonArray().apply {
+                    add(requestObject)
+                },
+            )
+        }
+
+        return requestBody.toString().also { Timber.d("Request JSON: $it") }
+    }
+
+    /**
+     * **Google Vision API 요청 전송**
+     */
+    private fun sendOcrRequest(requestJson: String): JsonObject {
+        val url =
+            URL("https://vision.googleapis.com/v1/images:annotate?key=${BuildConfig.CLOUD_VISION_API_KEY}")
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "POST"
+        connection.setRequestProperty("Content-Type", "application/json")
+        connection.setRequestProperty("User-Agent", "Android/com.nexters.misik")
+        connection.doOutput = true
+
+        try {
+            Timber.d("Sending OCR request to $url")
+            connection.outputStream.write(requestJson.toByteArray(Charsets.UTF_8))
+            connection.outputStream.flush()
+
+            Timber.d("Response Code: ${connection.responseCode}, Message: ${connection.responseMessage}")
+            val response = connection.inputStream.bufferedReader().use { it.readText() }
+
+            return com.google.gson.JsonParser.parseString(response).asJsonObject
+        } catch (e: Exception) {
+            throw CloudOcrException("OCR request failed", e)
+        } finally {
+            connection.disconnect()
+        }
     }
 }

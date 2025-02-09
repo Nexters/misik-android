@@ -1,4 +1,4 @@
-package com.nexters.misik.network.dto
+package com.nexters.misik.network.dto.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
