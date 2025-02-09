@@ -11,4 +11,5 @@ sealed interface WebViewIntent {
     ) : WebViewIntent
 
     data class Copy(val review: String) : WebViewIntent
+    data class HandleOcrResult(val ocrText: String?) : WebViewIntent
 }

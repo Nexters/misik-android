@@ -1,5 +1,6 @@
 package com.nexters.misik.preview.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,12 +16,24 @@ class PreviewActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val imageUri = intent.getStringExtra("imageUri")
-        imageUri?.let {
+        imageUri?.let { it ->
             viewModel.handleIntent(PreviewIntent.LoadImage(it))
 
             setContent {
-                PreviewScreen(viewModel, imageUri)
+                PreviewScreen(
+                    viewModel,
+                    imageUri,
+                    onClose = { result -> finishWebViewWithResult(result) },
+                )
             }
         }
+    }
+
+    private fun finishWebViewWithResult(imageUri: String?) {
+        val resultIntent = Intent().apply {
+            putExtra("imageUri", imageUri)
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
     }
 }

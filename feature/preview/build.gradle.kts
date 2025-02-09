@@ -37,6 +37,7 @@ dependencies {
     implementation(projects.ocr)
     implementation(libs.timber)
     implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

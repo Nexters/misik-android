@@ -1,5 +1,6 @@
 [versions]
 # SDK Versions
+coilGif = "2.4.0"
 compileSdk = "35"
 minSdk = "28"
 playServicesMlkitTextRecognition = "19.0.1"
@@ -128,6 +129,7 @@ misik-android-application-firebase = { id = "misik.android.application.firebase"
 [libraries]
 # Android Gradle Plugin
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle-plugin" }
+coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilGif" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradle-plugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
