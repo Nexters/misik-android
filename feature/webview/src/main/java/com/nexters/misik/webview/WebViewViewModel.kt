@@ -109,12 +109,11 @@ class WebViewViewModel @Inject constructor(
                 reviewStyle = intent.reviewStyle,
             )
                 .onSuccess { data ->
-                    /*if (data != null) {
-                        _state.update {
-                            it.copy(reviewId = data)
-                        }
+                    if (data != null) {
+                        _state.value = WebViewState.GenerateReview(data)
+                        getReview(data)
                         Timber.d("generateReview_Success", data.toString())
-                    }*/
+                    }
                 }
                 .onFailure { exception ->
                     Timber.d("generateReview_Failure", exception.message)
@@ -122,18 +121,14 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
-    fun getReview() {
+    private fun getReview(id: Long) {
         viewModelScope.launch {
-            reviewRepository.getReview(
-                id = 674907886775732982,
-            )
+            reviewRepository.getReview(id)
                 .onSuccess { data ->
-                    /*if (data != null) {
-                        _state.update {
-                            it.copy(review = data)
-                        }
-                        Timber.d("getReview_Success", " ${data.isSuccess} ${data.review} ${data.id}")
-                    }*/
+                    val reviewText = data?.review ?: return@launch
+                    _state.value = WebViewState.CompleteReview(reviewText)
+                    // TODO : receiveGenerateReview 웹으로 보내기
+                    Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
                 }
                 .onFailure { exception ->
                     Timber.d("getReview_Failure", exception.message)
