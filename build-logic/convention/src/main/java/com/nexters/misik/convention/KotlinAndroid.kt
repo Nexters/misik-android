@@ -31,18 +31,18 @@ internal fun Project.configureKotlinAndroid(
 
         buildTypes {
             getByName("debug") {
-                proguardFiles(
-                    getDefaultProguardFile("proguard-android.txt"),
-                    "proguard-debug.pro",
-                )
+//                proguardFiles(
+//                    getDefaultProguardFile("proguard-android.txt"),
+//                    "proguard-debug.pro",
+//                )
             }
 
             getByName("release") {
-                isMinifyEnabled = true
-                proguardFiles(
-                    getDefaultProguardFile("proguard-android.txt"),
-                    "proguard-rules.pro",
-                )
+//                isMinifyEnabled = true
+//                proguardFiles(
+//                    getDefaultProguardFile("proguard-android.txt"),
+//                    "proguard-rules.pro",
+//                )
             }
         }
     }
