@@ -135,5 +135,4 @@ class WebViewViewModel @Inject constructor(
                 }
         }
     }
-
 }
