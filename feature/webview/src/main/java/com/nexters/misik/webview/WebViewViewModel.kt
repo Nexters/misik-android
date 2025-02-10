@@ -1,5 +1,6 @@
 package com.nexters.misik.webview
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nexters.misik.domain.ReviewRepository
@@ -22,6 +23,7 @@ class WebViewViewModel @Inject constructor(
     val responseJs: StateFlow<String?> = _responseJs
 
     fun sendIntent(intent: WebViewIntent) {
+        Timber.d("WebViewIntent $intent")
         when (intent) {
             is WebViewIntent.Share -> {
                 Timber.d("WebViewIntent: Share -> ${intent.content}")
@@ -54,7 +56,7 @@ class WebViewViewModel @Inject constructor(
     }
 
     fun onEvent(event: WebViewEvent) {
-        Timber.i("onEvent: $event")
+        Log.i("webviewEvent", "onEvent: $event")
         when (event) {
             WebViewEvent.LoadPage -> {
                 _state.value = WebViewState.PageLoading
@@ -93,8 +95,8 @@ class WebViewViewModel @Inject constructor(
     }
 
     private fun makeResponse(functionName: String, response: String): String {
-        val escapedResponse = JSONObject.quote(response)
-        return ("javascript:window.response.$functionName('$escapedResponse')").apply {
+        val escapedJson = JSONObject.quote(response)
+        return ("javascript:window.response.$functionName($escapedJson);").apply {
             Timber.i(
                 this,
             )

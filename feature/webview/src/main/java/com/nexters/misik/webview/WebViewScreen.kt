@@ -1,6 +1,7 @@
 package com.nexters.misik.webview
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -57,27 +58,34 @@ fun WebViewScreen(
             onEvent = { event -> viewModel.onEvent(event) },
         )
     }
+    Log.d("WebViewInstance", "Created WebView hash: ${webView.hashCode()}")
 
     LaunchedEffect(responseJs) {
         responseJs?.let { jsResponse ->
-            Timber.d("WebViewScreen_ResponseJs", jsResponse)
-            webView.loadUrl(jsResponse)
+            Timber.d("WebViewScreen_ResponseJs $jsResponse")
+            webView.evaluateJavascript(jsResponse) { result ->
+                Timber.d("JavaScript Execution Result: $result")
+            }
         }
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        when (uiState) {
-            WebViewState.PageLoading -> {
-                Timber.d("WebViewScreen_UiState", "Loading")
-                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
-            }
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { webView },
+            update = { webView ->
+                Log.d("AndroidView", "updated :${webView.hashCode()}")
+            },
+        )
 
-            else -> {
-                Timber.d("WebViewScreen_UiState", "Loaded")
-                AndroidView(
-                    modifier = Modifier.fillMaxSize(),
-                    factory = { webView },
-                )
+        if (uiState == WebViewState.PageLoading) {
+            Timber.d("WebViewScreen_UiState", "Loading")
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center), // 오버레이처럼 위에 띄움
+            ) {
+                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
             }
         }
     }
