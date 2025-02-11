@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -17,7 +15,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nexters.misik.preview.PreviewService
 import com.nexters.misik.webview.base.MisikWebViewFactory
 import com.nexters.misik.webview.bridge.WebInterface
-import com.nexters.misik.webview.common.LoadingAnimation
 import timber.log.Timber
 
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
@@ -28,7 +25,7 @@ fun WebViewScreen(
     viewModel: WebViewViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val responseJs by viewModel.responseJs.collectAsState()
+    val responseJs by viewModel.responseJs.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val webInterface = remember {
@@ -45,6 +42,7 @@ fun WebViewScreen(
                         viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
                     },
                 )
+
                 else -> viewModel.sendIntent(intent)
             }
         }
@@ -59,18 +57,20 @@ fun WebViewScreen(
     }
 
     LaunchedEffect(responseJs) {
-        responseJs?.let { jsResponse ->
-            Timber.d("WebViewScreen_ResponseJs", jsResponse)
-            webView.loadUrl(jsResponse)
-        }
+        responseJs?.let {
+            webView.evaluateJavascript(it, null)
+            Timber.d("WebViewScreen_toJS_receiveScan_Success", it)
+        } ?: Timber.d("WebViewScreen_toJS_receiveScan", "js is null")
     }
+
+
 
     Box(modifier = modifier.fillMaxSize()) {
         when (uiState) {
-            WebViewState.PageLoading -> {
-                Timber.d("WebViewScreen_UiState", "Loading")
-                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
-            }
+//            WebViewState.PageLoading -> {
+//                Timber.d("WebViewScreen_UiState", "Loading")
+//                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
+//            }
 
             else -> {
                 Timber.d("WebViewScreen_UiState", "Loaded")

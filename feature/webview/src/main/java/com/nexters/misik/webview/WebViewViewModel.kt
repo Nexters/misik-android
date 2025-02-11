@@ -2,11 +2,13 @@ package com.nexters.misik.webview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nexters.misik.domain.ParsedEntity
 import com.nexters.misik.domain.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
@@ -80,8 +82,12 @@ class WebViewViewModel @Inject constructor(
             reviewRepository.getOcrParsedResponse(ocrText)
                 .onSuccess { data ->
                     if (data != null) {
-                        _responseJs.value = makeResponse("receiveScanResult", data)
-                        Timber.d("parsingOcr_Success", data.toString())
+                        // parsed 데이터를 JSON으로 변환
+                        val jsonResponse = convertToJson(data)
+                        _state.value = WebViewState.ParseOcrText(data)
+                        _responseJs.value = makeResponse("receiveScanResult", jsonResponse)
+
+                        Timber.d("parsingOcr_Success", jsonResponse.toString())
                     }
                     _state.value = WebViewState.PageLoaded
                 }
@@ -92,12 +98,27 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
+    private fun convertToJson(parsedEntity: ParsedEntity): String {
+        val jsonArray = JSONArray()
+
+        for (parsedOcr in parsedEntity.parsed) {
+            val key = parsedOcr.key ?: continue
+            val value = parsedOcr.value ?: continue
+
+            val jsonObject = JSONObject()
+            jsonObject.put(key, value)
+
+            jsonArray.put(jsonObject)
+        }
+
+        return jsonArray.toString()
+    }
+
     private fun makeResponse(functionName: String, response: String): String {
         val escapedResponse = JSONObject.quote(response)
-        return ("javascript:window.response.$functionName('$escapedResponse')").apply {
-            Timber.i(
-                this,
-            )
+
+        return "javascript:window.response.$functionName($escapedResponse)".apply {
+            Timber.i("Generated JS: $this")
         }
     }
 
