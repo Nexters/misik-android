@@ -68,9 +68,28 @@ fun WebViewScreen(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { webView },
+            update = { webView ->
+                Timber.d("updated :${webView.hashCode()}")
+            },
+        )
+
         when (val state = uiState) {
             is WebViewState.CopyToClipBoard -> {
                 CopyToClipboard(state.review)
+            }
+
+            is WebViewState.PageLoading -> {
+                Timber.d("WebViewScreen_UiState", "Loading")
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.Center), // 오버레이처럼 위에 띄움
+                ) {
+                    LoadingAnimation(modifier = Modifier.align(Alignment.Center))
+                }
             }
 
             else -> {
@@ -81,6 +100,8 @@ fun WebViewScreen(
                 )
             }
         }
+
+
     }
 }
 
