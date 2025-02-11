@@ -70,13 +70,13 @@ fun WebViewScreen(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-//        AndroidView(
-//            modifier = Modifier.fillMaxSize(),
-//            factory = { webView },
-//            update = { webView ->
-//                Timber.d("updated :${webView.hashCode()}")
-//            },
-//        )
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { webView },
+            update = { webView ->
+                Timber.d("updated :${webView.hashCode()}")
+            },
+        )
         when (val state = uiState) {
             is WebViewState.CopyToClipBoard -> {
                 CopyToClipboard(state.review)
@@ -94,11 +94,6 @@ fun WebViewScreen(
             }
 
             else -> {
-                Timber.d("WebViewScreen_UiState", "Loaded")
-                AndroidView(
-                    modifier = Modifier.fillMaxSize(),
-                    factory = { webView },
-                )
             }
         }
     }
