@@ -2,6 +2,7 @@ package com.nexters.misik.webview.bridge
 
 import android.webkit.JavascriptInterface
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.nexters.misik.webview.WebViewIntent
 import com.nexters.misik.webview.bridge.dto.request.CopyRequest
 import com.nexters.misik.webview.bridge.dto.request.CreateReviewRequest
@@ -33,10 +34,21 @@ class WebInterface(
 
     @JavascriptInterface
     fun createReview(json: String) {
-        Timber.i("createReview: $json")
-        val request = gson.fromJson(json, CreateReviewRequest::class.java)
-        eventCallback(request.toIntent())
+        try {
+            val request = gson.fromJson(json, CreateReviewRequest::class.java)
+
+            val intent = WebViewIntent.CreateReview(
+                ocrText = request.ocrText,
+                hashTags = request.hashTag,
+                reviewStyle = request.reviewStyle
+            )
+
+            eventCallback(intent)
+        } catch (e: JsonSyntaxException) {
+        }
     }
+
+
 
     @JavascriptInterface
     fun copy(json: String) {
