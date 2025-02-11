@@ -79,10 +79,8 @@ class WebViewViewModel @Inject constructor(
             _state.value = WebViewState.PageLoading
             reviewRepository.getOcrParsedResponse(ocrText)
                 .onSuccess { data ->
-                    if (data != null) {
-                        _responseJs.value = makeResponse("receiveScanResult", data)
-                        Timber.d("parsingOcr_Success", data.toString())
-                    }
+                    _responseJs.value = makeResponse("receiveScanResult", data)
+                    Timber.d("parsingOcr_Success", data)
                     _state.value = WebViewState.PageLoaded
                 }
                 .onFailure { exception ->
@@ -93,8 +91,8 @@ class WebViewViewModel @Inject constructor(
     }
 
     private fun makeResponse(functionName: String, response: String): String {
-        val escapedResponse = JSONObject.quote(response)
-        return ("javascript:window.response.$functionName('$escapedResponse')").apply {
+        val escapedJson = JSONObject.quote(response)
+        return ("javascript:window.response.$functionName($escapedJson);").apply {
             Timber.i(
                 this,
             )

@@ -20,12 +20,9 @@ object MisikWebViewFactory {
                 ViewGroup.LayoutParams.MATCH_PARENT,
             )
             settings.javaScriptEnabled = true
-
             addJavascriptInterface(webInterface, "AndroidBridge")
-
             webViewClient = MisikWebViewClient(onEvent)
             webChromeClient = MisikWebChromeClient()
-
             loadUrl("https://misik-web.vercel.app/")
         }
     }

@@ -45,6 +45,7 @@ fun WebViewScreen(
                         viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
                     },
                 )
+
                 else -> viewModel.sendIntent(intent)
             }
         }
@@ -60,24 +61,30 @@ fun WebViewScreen(
 
     LaunchedEffect(responseJs) {
         responseJs?.let { jsResponse ->
-            Timber.d("WebViewScreen_ResponseJs", jsResponse)
-            webView.loadUrl(jsResponse)
+            Timber.d("WebViewScreen_ResponseJs $jsResponse")
+            webView.evaluateJavascript(jsResponse) { result ->
+                Timber.d("JavaScript Execution Result: $result")
+            }
         }
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        when (uiState) {
-            WebViewState.PageLoading -> {
-                Timber.d("WebViewScreen_UiState", "Loading")
-                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
-            }
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { webView },
+            update = { webView ->
+                Timber.d("updated :${webView.hashCode()}")
+            },
+        )
 
-            else -> {
-                Timber.d("WebViewScreen_UiState", "Loaded")
-                AndroidView(
-                    modifier = Modifier.fillMaxSize(),
-                    factory = { webView },
-                )
+        if (uiState == WebViewState.PageLoading) {
+            Timber.d("WebViewScreen_UiState", "Loading")
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center), // 오버레이처럼 위에 띄움
+            ) {
+                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
             }
         }
     }

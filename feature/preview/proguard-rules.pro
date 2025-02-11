@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Hilt 관련 Keep 설정
+-keep class dagger.hilt.** { *; }
+-keep class com.nexters.misik.** { *; }
+-keep class com.nexters.misik.domain.** { *; }
+-keep class com.nexters.misik.ocr.** { *; }
+
+# Hilt-generated 코드 유지
+-keep class **_HiltModules { *; }
+-keep class **_HiltComponents { *; }
