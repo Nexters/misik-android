@@ -1,6 +1,5 @@
 package com.nexters.misik.webview
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nexters.misik.domain.ReviewRepository
@@ -23,7 +22,6 @@ class WebViewViewModel @Inject constructor(
     val responseJs: StateFlow<String?> = _responseJs
 
     fun sendIntent(intent: WebViewIntent) {
-        Timber.d("WebViewIntent $intent")
         when (intent) {
             is WebViewIntent.Share -> {
                 Timber.d("WebViewIntent: Share -> ${intent.content}")
@@ -56,7 +54,7 @@ class WebViewViewModel @Inject constructor(
     }
 
     fun onEvent(event: WebViewEvent) {
-        Log.i("webviewEvent", "onEvent: $event")
+        Timber.i("onEvent: $event")
         when (event) {
             WebViewEvent.LoadPage -> {
                 _state.value = WebViewState.PageLoading
@@ -81,10 +79,8 @@ class WebViewViewModel @Inject constructor(
             _state.value = WebViewState.PageLoading
             reviewRepository.getOcrParsedResponse(ocrText)
                 .onSuccess { data ->
-                    if (data != null) {
-                        _responseJs.value = makeResponse("receiveScanResult", data)
-                        Timber.d("parsingOcr_Success", data.toString())
-                    }
+                    _responseJs.value = makeResponse("receiveScanResult", data)
+                    Timber.d("parsingOcr_Success", data)
                     _state.value = WebViewState.PageLoaded
                 }
                 .onFailure { exception ->

@@ -1,7 +1,6 @@
 package com.nexters.misik.webview
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -46,6 +45,7 @@ fun WebViewScreen(
                         viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
                     },
                 )
+
                 else -> viewModel.sendIntent(intent)
             }
         }
@@ -58,7 +58,6 @@ fun WebViewScreen(
             onEvent = { event -> viewModel.onEvent(event) },
         )
     }
-    Log.d("WebViewInstance", "Created WebView hash: ${webView.hashCode()}")
 
     LaunchedEffect(responseJs) {
         responseJs?.let { jsResponse ->
@@ -74,7 +73,7 @@ fun WebViewScreen(
             modifier = Modifier.fillMaxSize(),
             factory = { webView },
             update = { webView ->
-                Log.d("AndroidView", "updated :${webView.hashCode()}")
+                Timber.d("updated :${webView.hashCode()}")
             },
         )
 
