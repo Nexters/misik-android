@@ -1,6 +1,10 @@
 package com.nexters.misik.webview
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -61,18 +65,13 @@ fun WebViewScreen(
             webView.evaluateJavascript(it, null)
             Timber.d("WebViewScreen_toJS_Success", it)
         } ?: Timber.d("WebViewScreen_toJS_Failure", "js is null")
-
     }
 
-
-
     Box(modifier = modifier.fillMaxSize()) {
-        when (uiState) {
-//            WebViewState.PageLoading -> {
-//                Timber.d("WebViewScreen_UiState", "Loading")
-//                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
-//            }
-
+        when (val state = uiState) {
+            is WebViewState.CopyToClipBoard -> {
+                CopyToClipboard(state.review)
+            }
 
             else -> {
                 Timber.d("WebViewScreen_UiState", "Loaded")
@@ -83,4 +82,13 @@ fun WebViewScreen(
             }
         }
     }
+}
+
+@Composable
+fun CopyToClipboard(review: String) {
+    val context = LocalContext.current
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("Review", review)
+    clipboard.setPrimaryClip(clip)
+    Toast.makeText(context, "리뷰가 클립보드에 복사되었습니다.", Toast.LENGTH_SHORT).show()
 }

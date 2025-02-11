@@ -7,6 +7,7 @@ import com.nexters.misik.webview.WebViewIntent
 import com.nexters.misik.webview.bridge.dto.request.CopyRequest
 import com.nexters.misik.webview.bridge.dto.request.CreateReviewRequest
 import com.nexters.misik.webview.bridge.dto.request.toIntent
+import org.json.JSONObject
 import timber.log.Timber
 
 class WebInterface(
@@ -28,8 +29,14 @@ class WebInterface(
 
     @JavascriptInterface
     fun share(content: String) {
-        Timber.i("share: $content")
-        eventCallback(WebViewIntent.Share(content))
+        try {
+            val json = JSONObject(content)
+            val reviewText = json.optString("review")
+            val intent = WebViewIntent.Copy(reviewText)
+
+            eventCallback(intent)
+        } catch (e: Exception) {
+        }
     }
 
     @JavascriptInterface
@@ -40,15 +47,13 @@ class WebInterface(
             val intent = WebViewIntent.CreateReview(
                 ocrText = request.ocrText,
                 hashTags = request.hashTag,
-                reviewStyle = request.reviewStyle
+                reviewStyle = request.reviewStyle,
             )
 
             eventCallback(intent)
         } catch (e: JsonSyntaxException) {
         }
     }
-
-
 
     @JavascriptInterface
     fun copy(json: String) {

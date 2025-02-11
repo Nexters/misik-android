@@ -51,8 +51,8 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
-    private fun copyToClipboard(review: String) {
-        // TODO
+    fun copyToClipboard(review: String) {
+        _state.value = WebViewState.CopyToClipBoard(review)
     }
 
     fun onEvent(event: WebViewEvent) {
@@ -141,6 +141,7 @@ class WebViewViewModel @Inject constructor(
                 }
         }
     }
+
     private fun getReview(id: Long) {
         viewModelScope.launch {
             reviewRepository.getReview(id)
@@ -150,7 +151,8 @@ class WebViewViewModel @Inject constructor(
                     val jsonResponse = JSONObject()
                     jsonResponse.put("result", reviewText)
 
-                    _responseJs.value = makeResponse("receiveGeneratedReview", jsonResponse.toString())
+                    _responseJs.value =
+                        makeResponse("receiveGeneratedReview", jsonResponse.toString())
 
                     Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
                 }
@@ -159,5 +161,4 @@ class WebViewViewModel @Inject constructor(
                 }
         }
     }
-
 }

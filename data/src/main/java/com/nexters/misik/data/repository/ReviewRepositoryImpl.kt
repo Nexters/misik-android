@@ -24,7 +24,7 @@ class ReviewRepositoryImpl @Inject constructor(
             hashTag = hashTags,
             reviewStyle = reviewStyle,
         )
-        remoteDataSource.generateReview(GenerateReviewRequestDto.createMock())
+        remoteDataSource.generateReview(requestDto)
     }
 
     override suspend fun getReview(id: Long): Result<ReviewEntity?> = runCatching {
