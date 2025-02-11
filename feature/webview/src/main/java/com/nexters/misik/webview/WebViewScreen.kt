@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -19,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nexters.misik.preview.PreviewService
 import com.nexters.misik.webview.base.MisikWebViewFactory
 import com.nexters.misik.webview.bridge.WebInterface
+import com.nexters.misik.webview.common.LoadingAnimation
 import timber.log.Timber
 
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
@@ -68,14 +70,13 @@ fun WebViewScreen(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { webView },
-            update = { webView ->
-                Timber.d("updated :${webView.hashCode()}")
-            },
-        )
-
+//        AndroidView(
+//            modifier = Modifier.fillMaxSize(),
+//            factory = { webView },
+//            update = { webView ->
+//                Timber.d("updated :${webView.hashCode()}")
+//            },
+//        )
         when (val state = uiState) {
             is WebViewState.CopyToClipBoard -> {
                 CopyToClipboard(state.review)
