@@ -1,11 +1,14 @@
 package com.nexters.misik.webview
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,7 +31,7 @@ fun WebViewScreen(
     viewModel: WebViewViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val responseJs by viewModel.responseJs.collectAsState()
+    val responseJs by viewModel.responseJs.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val webInterface = remember {
@@ -60,12 +63,10 @@ fun WebViewScreen(
     }
 
     LaunchedEffect(responseJs) {
-        responseJs?.let { jsResponse ->
-            Timber.d("WebViewScreen_ResponseJs $jsResponse")
-            webView.evaluateJavascript(jsResponse) { result ->
-                Timber.d("JavaScript Execution Result: $result")
-            }
-        }
+        responseJs?.let {
+            webView.evaluateJavascript(it, null)
+            Timber.d("WebViewScreen_toJS_Success", it)
+        } ?: Timber.d("WebViewScreen_toJS_Failure", "js is null")
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -76,16 +77,33 @@ fun WebViewScreen(
                 Timber.d("updated :${webView.hashCode()}")
             },
         )
+        when (val state = uiState) {
+            is WebViewState.CopyToClipBoard -> {
+                CopyToClipboard(state.review)
+            }
 
-        if (uiState == WebViewState.PageLoading) {
-            Timber.d("WebViewScreen_UiState", "Loading")
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.Center), // 오버레이처럼 위에 띄움
-            ) {
-                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
+            is WebViewState.PageLoading -> {
+                Timber.d("WebViewScreen_UiState", "Loading")
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.Center), // 오버레이처럼 위에 띄움
+                ) {
+                    LoadingAnimation(modifier = Modifier.align(Alignment.Center))
+                }
+            }
+
+            else -> {
             }
         }
     }
+}
+
+@Composable
+fun CopyToClipboard(review: String) {
+    val context = LocalContext.current
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("Review", review)
+    clipboard.setPrimaryClip(clip)
+    Toast.makeText(context, "리뷰가 클립보드에 복사되었습니다.", Toast.LENGTH_SHORT).show()
 }
