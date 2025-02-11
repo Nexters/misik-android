@@ -141,14 +141,17 @@ class WebViewViewModel @Inject constructor(
                 }
         }
     }
-
     private fun getReview(id: Long) {
         viewModelScope.launch {
             reviewRepository.getReview(id)
                 .onSuccess { data ->
                     val reviewText = data?.review ?: return@launch
                     _state.value = WebViewState.CompleteReview(reviewText)
-                    // TODO : receiveGenerateReview 웹으로 보내기
+                    val jsonResponse = JSONObject()
+                    jsonResponse.put("result", reviewText)
+
+                    _responseJs.value = makeResponse("receiveGeneratedReview", jsonResponse.toString())
+
                     Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
                 }
                 .onFailure { exception ->
@@ -156,4 +159,5 @@ class WebViewViewModel @Inject constructor(
                 }
         }
     }
+
 }

@@ -59,8 +59,9 @@ fun WebViewScreen(
     LaunchedEffect(responseJs) {
         responseJs?.let {
             webView.evaluateJavascript(it, null)
-            Timber.d("WebViewScreen_toJS_receiveScan_Success", it)
-        } ?: Timber.d("WebViewScreen_toJS_receiveScan", "js is null")
+            Timber.d("WebViewScreen_toJS_Success", it)
+        } ?: Timber.d("WebViewScreen_toJS_Failure", "js is null")
+
     }
 
 
@@ -71,6 +72,7 @@ fun WebViewScreen(
 //                Timber.d("WebViewScreen_UiState", "Loading")
 //                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
 //            }
+
 
             else -> {
                 Timber.d("WebViewScreen_UiState", "Loaded")
