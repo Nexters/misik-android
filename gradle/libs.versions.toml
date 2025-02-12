@@ -2,6 +2,7 @@
 # SDK Versions
 coilGif = "2.4.0"
 compileSdk = "35"
+lottieCompose = "6.1.0"
 minSdk = "28"
 playServicesMlkitTextRecognition = "19.0.1"
 playServicesMlkitTextRecognitionKorean = "16.0.1"
@@ -143,6 +144,7 @@ kotlinx-collections = { group = "org.jetbrains.kotlinx", name = "kotlinx-collect
 
 # Testing Libraries
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }

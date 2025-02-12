@@ -29,3 +29,6 @@
 # Hilt-generated 코드 유지
 -keep class **_HiltModules { *; }
 -keep class **_HiltComponents { *; }
+
+-keep class com.airbnb.lottie.** { *; }
+-keep class androidx.lifecycle.DefaultLifecycleObserver
