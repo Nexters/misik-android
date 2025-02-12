@@ -149,7 +149,7 @@ fun CloseButton(
 
     IconButton(
         onClick = onClick,
-        modifier = modifier.padding(8.dp, 8.dp),
+        modifier = modifier.padding(8.dp),
     ) {
         Image(
             painter = rememberAsyncImagePainter(imageRequest),
