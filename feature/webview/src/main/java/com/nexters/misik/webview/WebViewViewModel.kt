@@ -2,13 +2,13 @@ package com.nexters.misik.webview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.nexters.misik.domain.ParsedEntity
 import com.nexters.misik.domain.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
@@ -51,7 +51,7 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
-    fun copyToClipboard(review: String) {
+    private fun copyToClipboard(review: String) {
         _state.value = WebViewState.CopyToClipBoard(review)
     }
 
@@ -82,12 +82,11 @@ class WebViewViewModel @Inject constructor(
             reviewRepository.getOcrParsedResponse(ocrText)
                 .onSuccess { data ->
                     if (data != null) {
-                        // parsed 데이터를 JSON으로 변환
                         val jsonResponse = convertToJson(data)
                         _state.value = WebViewState.ParseOcrText(data)
                         _responseJs.value = makeResponse("receiveScanResult", jsonResponse)
 
-                        Timber.d("parsingOcr_Success", jsonResponse.toString())
+                        Timber.d("parsingOcr_Success", jsonResponse)
                     }
                     _state.value = WebViewState.PageLoaded
                 }
@@ -98,20 +97,8 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
-    private fun convertToJson(parsedEntity: ParsedEntity): String {
-        val jsonArray = JSONArray()
-
-        for (parsedOcr in parsedEntity.parsed) {
-            val key = parsedOcr.key ?: continue
-            val value = parsedOcr.value ?: continue
-
-            val jsonObject = JSONObject()
-            jsonObject.put(key, value)
-
-            jsonArray.put(jsonObject)
-        }
-
-        return jsonArray.toString()
+    private fun convertToJson(data: ParsedEntity): String {
+        return Gson().toJson(data)
     }
 
     private fun makeResponse(functionName: String, response: String): String {

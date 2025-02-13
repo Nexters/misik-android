@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -105,5 +104,4 @@ fun CopyToClipboard(review: String) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clip = ClipData.newPlainText("Review", review)
     clipboard.setPrimaryClip(clip)
-    Toast.makeText(context, "리뷰가 클립보드에 복사되었습니다.", Toast.LENGTH_SHORT).show()
 }
