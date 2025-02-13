@@ -79,7 +79,7 @@ class WebViewViewModel @Inject constructor(
     private fun parsingOcr(ocrText: String) {
         viewModelScope.launch {
             _state.value = WebViewState.PageLoading
-            reviewRepository.getOcrParsedResponse (ocrText)
+            reviewRepository.getOcrParsedResponse(ocrText)
                 .onSuccess { data ->
                     if (data != null) {
                         val jsonResponse = convertToJson(data)
