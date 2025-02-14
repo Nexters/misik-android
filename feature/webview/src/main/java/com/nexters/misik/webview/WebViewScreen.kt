@@ -20,6 +20,7 @@ import com.nexters.misik.preview.PreviewService
 import com.nexters.misik.webview.base.MisikWebViewFactory
 import com.nexters.misik.webview.bridge.WebInterface
 import com.nexters.misik.webview.common.LoadingAnimation
+import com.nexters.misik.webview.util.ShareUtil
 import timber.log.Timber
 
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
@@ -47,6 +48,10 @@ fun WebViewScreen(
                         viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
                     },
                 )
+
+                is WebViewIntent.Share -> {
+                    ShareUtil.shareApp(context)
+                }
 
                 else -> viewModel.sendIntent(intent)
             }
