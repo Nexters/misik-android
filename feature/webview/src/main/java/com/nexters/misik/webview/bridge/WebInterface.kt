@@ -1,6 +1,5 @@
 package com.nexters.misik.webview.bridge
 
-import android.util.Log
 import android.webkit.JavascriptInterface
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -29,7 +28,6 @@ class WebInterface(
 
     @JavascriptInterface
     fun share() {
-        Log.d("TEST", "share")
         eventCallback(WebViewIntent.Share)
     }
 
