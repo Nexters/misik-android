@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
-                    .safeDrawingPadding()
+                    .safeDrawingPadding(),
             ) { innerPadding ->
                 WebViewScreen(
                     previewService,
@@ -49,6 +49,5 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-
     }
 }
