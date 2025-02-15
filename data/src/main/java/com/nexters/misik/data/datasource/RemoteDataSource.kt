@@ -3,6 +3,7 @@ package com.nexters.misik.data.datasource
 import com.nexters.misik.data.mapper.ReviewMapper.toModel
 import com.nexters.misik.data.model.OcrParsedResponse
 import com.nexters.misik.data.model.Review
+import com.nexters.misik.data.model.VersionUpdateUrl
 import com.nexters.misik.network.dto.request.GenerateReviewRequestDto
 import com.nexters.misik.network.dto.request.OcrParseRequestDto
 import com.nexters.misik.network.service.ReviewService
@@ -19,4 +20,10 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun getOcrParsedResponse(text: String): OcrParsedResponse =
         reviewService.getOcrParsedResponse(OcrParseRequestDto(text)).toModel()
+
+    suspend fun getVersionUpdateStatus(
+        appVersion: String,
+        appPlatform: String,
+    ): VersionUpdateUrl =
+        reviewService.getUpdateStatus(appVersion = appVersion, appPlatform = appPlatform).toModel()
 }
