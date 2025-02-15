@@ -84,7 +84,7 @@ class WebViewViewModel @Inject constructor(
                     if (data != null) {
                         val jsonResponse = convertToJson(data)
                         _state.value = WebViewState.ParseOcrText(data)
-                        _responseJs.value = makeResponse("receiveScanResult", SERVER_FAILURE_MSG)
+                        _responseJs.value = makeResponse("receiveScanResult", jsonResponse)
 
                         Timber.d("parsingOcr_Success", jsonResponse)
                     }
@@ -140,13 +140,15 @@ class WebViewViewModel @Inject constructor(
                     jsonResponse.put("result", reviewText)
 
                     _responseJs.value =
-                        makeResponse("receiveGeneratedReview", SERVER_FAILURE_MSG)
+                        makeResponse("receiveGeneratedReview", jsonResponse.toString())
 
                     Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
                 }
                 .onFailure { exception ->
+                    val jsonResponse = JSONObject()
+                    jsonResponse.put("result", SERVER_FAILURE_MSG)
                     _responseJs.value =
-                        makeResponse("receiveGeneratedReview", SERVER_FAILURE_MSG)
+                        makeResponse("receiveGeneratedReview", jsonResponse.toString())
                     Timber.d("getReview_Failure", exception.message)
                 }
         }
