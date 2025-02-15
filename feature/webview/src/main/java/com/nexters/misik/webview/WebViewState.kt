@@ -4,6 +4,7 @@ import com.nexters.misik.domain.ParsedEntity
 sealed class WebViewState {
     data object PageLoading : WebViewState()
     data object PageLoaded : WebViewState()
+    data class CheckIsUpdateRequired(val url: String) : WebViewState()
     data class ParseOcrText(val ocrText: ParsedEntity) : WebViewState()
     data class GenerateReview(val id: Long) : WebViewState()
     data class CompleteReview(val review: String) : WebViewState()

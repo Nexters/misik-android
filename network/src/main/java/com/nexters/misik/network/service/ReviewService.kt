@@ -35,7 +35,6 @@ interface ReviewService {
     @GET("/webview/home")
     suspend fun getUpdateStatus(
         @Header("app-version") appVersion: String,
-        @Header("app-platform") appPlatform: String
+        @Header("app-platform") appPlatform: String,
     ): Response<GetVersionUpdateDto>
-
 }

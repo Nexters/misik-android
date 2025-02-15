@@ -59,12 +59,10 @@ object ReviewMapper {
         )
     }
 
-
     fun VersionUpdateUrl.toDomain(): UpdateUrl {
         return UpdateUrl(
             statusCode = this.statusCode,
             url = this.url,
         )
     }
-
 }

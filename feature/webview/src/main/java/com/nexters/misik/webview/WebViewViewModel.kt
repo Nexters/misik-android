@@ -76,6 +76,37 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
+    fun getVersionUpdateStatus() {
+        viewModelScope.launch {
+            _state.value = WebViewState.PageLoading
+            reviewRepository.getVersionUpdateStatus(appVersion = "1.0.0", appPlatform = "ANDROID")
+                .onSuccess { data ->
+                    if (data != null) {
+                        val url = data.url
+                        when (data.statusCode) {
+                            200 -> {
+                                if (url != null) {
+                                    _state.value = WebViewState.CheckIsUpdateRequired(url)
+                                }
+                            }
+
+                            426 -> {
+                                if (url != null) {
+                                    _state.value = WebViewState.CheckIsUpdateRequired(url)
+                                }
+                            }
+                        }
+
+                        Timber.d("getVersionUpdateStatus_Success", url)
+                    }
+                }
+                .onFailure { exception ->
+                    _state.value = WebViewState.PageLoading
+                    Timber.d("getVersionUpdateStatus_Failure", exception.message)
+                }
+        }
+    }
+
     private fun parsingOcr(ocrText: String) {
         viewModelScope.launch {
             _state.value = WebViewState.PageLoading

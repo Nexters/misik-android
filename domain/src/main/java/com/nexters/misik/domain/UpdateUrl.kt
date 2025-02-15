@@ -1,6 +1,6 @@
 package com.nexters.misik.domain
 
-data class UpdateUrl (
+data class UpdateUrl(
     val statusCode: Int?,
-    val url: String?
+    val url: String?,
 )

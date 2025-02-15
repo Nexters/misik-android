@@ -7,4 +7,4 @@ import kotlinx.serialization.Serializable
 data class GetVersionUpdateDto(
     @SerialName("url")
     val url: String?,
-    )
+)

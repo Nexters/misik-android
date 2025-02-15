@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -58,12 +59,34 @@ fun WebViewScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.getVersionUpdateStatus()
+    }
+
+    val initializedUrl by rememberUpdatedState(
+        when (val state = uiState) {
+            is WebViewState.CheckIsUpdateRequired -> {
+                state.url
+            }
+            else -> {
+                ""
+            }
+        },
+    )
+
     val webView = remember {
         MisikWebViewFactory.create(
             context = context,
             webInterface = webInterface,
             onEvent = { event -> viewModel.onEvent(event) },
         )
+    }
+
+    LaunchedEffect(initializedUrl) {
+        if (initializedUrl.isNotEmpty()) {
+            webView.loadUrl(initializedUrl)
+            Timber.d("WebViewScreen_LoadingUrl: $initializedUrl")
+        }
     }
 
     LaunchedEffect(responseJs) {
