@@ -2,9 +2,8 @@ package com.nexters.misik.webview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.nexters.misik.domain.ParsedEntity
 import com.nexters.misik.domain.ReviewRepository
+import com.nexters.misik.webview.util.JsResponseUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,7 +41,7 @@ class WebViewViewModel @Inject constructor(
 
             is WebViewIntent.HandleOcrResult -> {
                 Timber.d("WebViewIntent: HandleOcrResult -> ${intent.ocrText}")
-                intent.ocrText?.let { parsingOcr(intent.ocrText) }
+                responseOcrParsed(intent.ocrText)
             }
 
             else -> {
@@ -76,36 +75,14 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
-    private fun parsingOcr(ocrText: String) {
+    private fun responseOcrParsed(ocrText: String?) {
         viewModelScope.launch {
-            _state.value = WebViewState.PageLoading
-            reviewRepository.getOcrParsedResponse(ocrText)
-                .onSuccess { data ->
-                    if (data != null) {
-                        val jsonResponse = convertToJson(data)
-                        _state.value = WebViewState.ParseOcrText(data)
-                        _responseJs.value = makeResponse("receiveScanResult", jsonResponse)
-
-                        Timber.d("parsingOcr_Success", jsonResponse)
-                    }
-                    _state.value = WebViewState.PageLoaded
-                }
-                .onFailure { exception ->
-                    _state.value = WebViewState.PageLoaded
-                    Timber.d("parsingOcr_Failure", exception.message)
-                }
-        }
-    }
-
-    private fun convertToJson(data: ParsedEntity): String {
-        return Gson().toJson(data)
-    }
-
-    private fun makeResponse(functionName: String, response: String): String {
-        val escapedResponse = JSONObject.quote(response)
-
-        return "javascript:window.response.$functionName($escapedResponse)".apply {
-            Timber.i("Generated JS: $this")
+            ocrText?.let {
+                _state.value = WebViewState.ParseOcrText(ocrText)
+                _responseJs.value = JsResponseUtil.makeResponse("receiveScanResult", ocrText)
+            } ?: run {
+                _responseJs.value = JsResponseUtil.makeFailureResponse("receiveScanResult")
+            }
         }
     }
 
@@ -139,7 +116,10 @@ class WebViewViewModel @Inject constructor(
                     jsonResponse.put("result", reviewText)
 
                     _responseJs.value =
-                        makeResponse("receiveGeneratedReview", jsonResponse.toString())
+                        JsResponseUtil.makeResponse(
+                            "receiveGeneratedReview",
+                            jsonResponse.toString(),
+                        )
 
                     Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
                 }

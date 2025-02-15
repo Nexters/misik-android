@@ -2,9 +2,7 @@ package com.nexters.misik.preview
 
 import android.Manifest
 import android.app.Activity
-import android.content.Intent
 import androidx.activity.ComponentActivity
-import com.nexters.misik.preview.ui.PreviewActivity
 import com.nexters.misik.preview.util.ImageHandler
 import com.nexters.misik.preview.util.MediaType
 import com.nexters.misik.preview.util.PermissionHandler
@@ -33,12 +31,5 @@ class PreviewService @Inject constructor(
             Manifest.permission.CAMERA,
             onGranted = { imageHandlerUtil.openMedia(MediaType.CAMERA, callback) },
         )
-    }
-
-    private fun startPreviewActivity(imageUri: String) {
-        val intent = Intent(activity, PreviewActivity::class.java).apply {
-            putExtra("imageUri", imageUri)
-        }
-        activity.startActivity(intent)
     }
 }

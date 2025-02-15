@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import com.nexters.misik.preview.ui.PreviewActivity
+import com.nexters.misik.preview.ui.PreviewActivity.Companion.RESULT
 import com.nexters.misik.preview.util.ImageStorageUtil.createImageUri
 import com.nexters.misik.preview.util.ImageStorageUtil.getCameraImagePath
 
@@ -49,8 +50,8 @@ class ImageHandler {
             ActivityResultContracts.StartActivityForResult(),
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val ocrText = result.data?.getStringExtra("imageUri")
-                callback?.invoke(ocrText) // 콜백 실행
+                val ocrParsedResult = result.data?.getStringExtra(RESULT)
+                callback?.invoke(ocrParsedResult) // 콜백 실행
             } else {
                 callback?.invoke(null) // 실패 시 null 전달
             }

@@ -57,8 +57,10 @@ fun PreviewScreen(
 
         when (state) {
             is PreviewState.Success -> {
+                val result = (state as PreviewState.Success).result
                 SuccessOverlay(
-                    text = viewModel.extractedText.value ?: "",
+                    extractedText = viewModel.extractedText.value ?: "",
+                    result = result,
                     onClose = onClose,
                 )
             }
@@ -76,6 +78,7 @@ fun PreviewScreen(
                     modifier = Modifier.padding(16.dp),
                     color = Color.Red,
                 )
+                onClose(null)
             }
         }
     }
@@ -83,25 +86,26 @@ fun PreviewScreen(
 
 @Composable
 fun SuccessOverlay(
-    text: String,
+    extractedText: String,
+    result: String,
     onClose: (String?) -> Unit,
 ) {
-//    if (BuildConfig.DEBUG) {
-//        Box(
-//            modifier = Modifier
-//                .background(Color.Black.copy(alpha = 0.5f))
-//                .padding(16.dp),
-//        ) {
-//            Text(
-//                text = text,
-//                color = Color.White,
-//            )
-//        }
-//    }
+    /*    if (BuildConfig.DEBUG) {
+            Box(
+                modifier = Modifier
+                    .background(Color.Black.copy(alpha = 0.5f))
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = extractedText,
+                    color = Color.White,
+                )
+            }
+        }*/
     // 2초 후 onClose 호출
     LaunchedEffect(Unit) {
         delay(2000)
-        onClose(text)
+        onClose(result)
     }
 }
 

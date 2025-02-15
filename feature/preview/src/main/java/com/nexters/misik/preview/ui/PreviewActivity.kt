@@ -29,11 +29,15 @@ class PreviewActivity : ComponentActivity() {
         }
     }
 
-    private fun finishWebViewWithResult(imageUri: String?) {
+    private fun finishWebViewWithResult(jsonStr: String?) {
         val resultIntent = Intent().apply {
-            putExtra("imageUri", imageUri)
+            putExtra(RESULT, jsonStr)
         }
         setResult(RESULT_OK, resultIntent)
         finish()
+    }
+
+    companion object {
+        const val RESULT = "result"
     }
 }
