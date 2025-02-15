@@ -26,7 +26,7 @@ class WebViewViewModel @Inject constructor(
     fun sendIntent(intent: WebViewIntent) {
         when (intent) {
             is WebViewIntent.Share -> {
-                Timber.d("WebViewIntent: Share -> ${intent.content}")
+                Timber.d("WebViewIntent: Share")
                 // 공유 기능 실행
             }
 

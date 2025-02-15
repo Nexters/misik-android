@@ -7,7 +7,6 @@ import com.nexters.misik.webview.WebViewIntent
 import com.nexters.misik.webview.bridge.dto.request.CopyRequest
 import com.nexters.misik.webview.bridge.dto.request.CreateReviewRequest
 import com.nexters.misik.webview.bridge.dto.request.toIntent
-import org.json.JSONObject
 import timber.log.Timber
 
 class WebInterface(
@@ -28,15 +27,8 @@ class WebInterface(
     }
 
     @JavascriptInterface
-    fun share(content: String) {
-        try {
-            val json = JSONObject(content)
-            val reviewText = json.optString("review")
-            val intent = WebViewIntent.Copy(reviewText)
-
-            eventCallback(intent)
-        } catch (e: Exception) {
-        }
+    fun share() {
+        eventCallback(WebViewIntent.Share)
     }
 
     @JavascriptInterface
