@@ -17,4 +17,11 @@ object JsResponseUtil {
     fun makeFailureResponse(functionName: String): String {
         return makeResponse(functionName, RESPONSE_FAILURE_MSG)
     }
+
+    fun makeReviewResponse(functionName: String, reviewText: String?): String {
+        val jsonResponse = JSONObject().apply {
+            put("result", reviewText ?: RESPONSE_FAILURE_MSG)
+        }
+        return makeResponse(functionName, jsonResponse.toString())
+    }
 }

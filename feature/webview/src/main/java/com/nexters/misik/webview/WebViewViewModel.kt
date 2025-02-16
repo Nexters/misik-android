@@ -8,7 +8,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -112,18 +111,13 @@ class WebViewViewModel @Inject constructor(
                 .onSuccess { data ->
                     val reviewText = data?.review ?: return@launch
                     _state.value = WebViewState.CompleteReview(reviewText)
-                    val jsonResponse = JSONObject()
-                    jsonResponse.put("result", reviewText)
-
                     _responseJs.value =
-                        JsResponseUtil.makeResponse(
-                            "receiveGeneratedReview",
-                            jsonResponse.toString(),
-                        )
+                        JsResponseUtil.makeReviewResponse("receiveGeneratedReview", reviewText)
 
                     Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
                 }
                 .onFailure { exception ->
+                    _responseJs.value = JsResponseUtil.makeFailureResponse("receiveGeneratedReview")
                     Timber.d("getReview_Failure", exception.message)
                 }
         }
