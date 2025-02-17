@@ -3,7 +3,7 @@ package com.nexters.misik.webview
 sealed interface WebViewIntent {
     data object OpenCamera : WebViewIntent
     data object OpenGallery : WebViewIntent
-    data object Share : WebViewIntent
+    data class Share(val shareText: String) : WebViewIntent
     data class CreateReview(
         val ocrText: String,
         val hashTags: List<String>,
