@@ -9,6 +9,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.ui)
     implementation(projects.data)
     implementation(projects.domain)
     implementation(projects.network)
