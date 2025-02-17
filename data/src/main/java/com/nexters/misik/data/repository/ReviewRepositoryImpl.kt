@@ -20,12 +20,14 @@ class ReviewRepositoryImpl @Inject constructor(
         hashTags: List<String>,
         reviewStyle: String,
     ): Result<Long> = runCatching {
-        val requestDto = GenerateReviewRequestDto(
-            ocrText = ocrText,
-            hashTag = hashTags,
-            reviewStyle = reviewStyle,
-        )
-        remoteDataSource.generateReview(requestDto)
+        withContext(Dispatchers.IO) {
+            val requestDto = GenerateReviewRequestDto(
+                ocrText = ocrText,
+                hashTag = hashTags,
+                reviewStyle = reviewStyle,
+            )
+            remoteDataSource.generateReview(requestDto)
+        }
     }
 
     override suspend fun getReview(id: Long): Result<ReviewEntity?> = runCatching {
