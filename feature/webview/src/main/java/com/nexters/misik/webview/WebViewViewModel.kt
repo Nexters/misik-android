@@ -3,6 +3,7 @@ package com.nexters.misik.webview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nexters.misik.domain.ReviewRepository
+import com.nexters.misik.feature.webview.BuildConfig
 import com.nexters.misik.webview.util.JsResponseUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,7 +86,7 @@ class WebViewViewModel @Inject constructor(
     fun getVersionUpdateStatus() {
         viewModelScope.launch {
             _state.value = WebViewState.PageLoading
-            reviewRepository.getVersionUpdateStatus(appVersion = "1.0.0", appPlatform = "ANDROID")
+            reviewRepository.getVersionUpdateStatus(appVersion = BuildConfig.VERSION_NAME, appPlatform = "ANDROID")
                 .onSuccess { data ->
                     if (data != null) {
                         val url = data.url
