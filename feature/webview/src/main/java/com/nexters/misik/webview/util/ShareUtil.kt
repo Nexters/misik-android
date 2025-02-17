@@ -10,7 +10,7 @@ object ShareUtil {
      * 기본 공유 기능 실행
      */
     fun shareApp(context: Context, shareText: String) {
-        shareTextIntent(context,shareText)
+        shareTextIntent(context, shareText)
     }
 
     /**

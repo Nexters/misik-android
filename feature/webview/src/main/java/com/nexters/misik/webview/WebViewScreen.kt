@@ -4,26 +4,35 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build
+import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nexters.misik.preview.PreviewService
 import com.nexters.misik.webview.base.MisikWebViewFactory
 import com.nexters.misik.webview.bridge.WebInterface
 import com.nexters.misik.webview.common.LoadingAnimation
+import com.nexters.misik.webview.util.JsResponseUtil.makeKeyboardHeightResponse
 import com.nexters.misik.webview.util.ShareUtil
 import timber.log.Timber
 
+@RequiresApi(Build.VERSION_CODES.R)
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
 fun WebViewScreen(
@@ -34,6 +43,9 @@ fun WebViewScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val responseJs by viewModel.responseJs.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    val view = LocalView.current
+    val keyboardHeight by viewModel.keyboardHeight.collectAsState()
 
     val webInterface = remember {
         WebInterface { intent ->
@@ -51,7 +63,7 @@ fun WebViewScreen(
                 )
 
                 is WebViewIntent.Share -> {
-                    ShareUtil.shareApp(context)
+                    ShareUtil.shareApp(context, intent.shareText)
                 }
 
                 else -> viewModel.sendIntent(intent)
@@ -68,6 +80,7 @@ fun WebViewScreen(
             is WebViewState.CheckIsUpdateRequired -> {
                 state.url
             }
+
             else -> {
                 ""
             }
@@ -86,6 +99,26 @@ fun WebViewScreen(
         if (initializedUrl.isNotEmpty()) {
             webView.loadUrl(initializedUrl)
             Timber.d("WebViewScreen_LoadingUrl: $initializedUrl")
+        }
+    }
+
+    DisposableEffect(view) {
+        val listener = View.OnApplyWindowInsetsListener { v, insets ->
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime()) // 키보드 높이 가져옴
+            viewModel.updateKeyboardHeight(ime.bottom) // 뷰모델에 업데이트
+            insets // 원래의 insets 반환
+        }
+        view.setOnApplyWindowInsetsListener(listener)
+        onDispose { view.setOnApplyWindowInsetsListener(null) }
+    }
+
+    // 키보드 높이 변화 시 웹에 전달
+    LaunchedEffect(keyboardHeight) {
+        if (keyboardHeight > 0) { // 키보드가 올라왔을 때만 전달
+            val jsCode =
+                makeKeyboardHeightResponse("receiveKeyboardHeight", keyboardHeight.toString())
+            webView.evaluateJavascript(jsCode, null)
+            Timber.d("WebViewScreen_sendKeyboardHeight", jsCode)
         }
     }
 

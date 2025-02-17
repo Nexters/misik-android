@@ -7,6 +7,7 @@ import com.nexters.misik.webview.util.JsResponseUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,6 +21,13 @@ class WebViewViewModel @Inject constructor(
 
     private val _responseJs = MutableStateFlow<String?>(null)
     val responseJs: StateFlow<String?> = _responseJs
+
+    private val _keyboardHeight = MutableStateFlow(0) // 키보드 높이 상태
+    val keyboardHeight: StateFlow<Int> = _keyboardHeight.asStateFlow()
+
+    fun updateKeyboardHeight(height: Int) {
+        _keyboardHeight.value = height
+    }
 
     fun sendIntent(intent: WebViewIntent) {
         when (intent) {
