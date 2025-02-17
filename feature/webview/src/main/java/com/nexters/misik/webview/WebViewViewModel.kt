@@ -105,7 +105,6 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
-    private fun parsingOcr(ocrText: String) {
     private fun responseOcrParsed(ocrText: String?) {
         viewModelScope.launch {
             ocrText?.let {
@@ -149,7 +148,8 @@ class WebViewViewModel @Inject constructor(
                     Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
                 }
                 .onFailure { exception ->
-                    _responseJs.value = JsResponseUtil.makeFailureResponse("receiveGeneratedReview")
+                    _responseJs.value =
+                        JsResponseUtil.makeFailureResponse("receiveGeneratedReview")
                     Timber.d("getReview_Failure", exception.message)
                 }
         }
