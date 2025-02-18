@@ -6,7 +6,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -32,7 +31,6 @@ import com.nexters.misik.webview.util.JsResponseUtil.makeKeyboardHeightResponse
 import com.nexters.misik.webview.util.ShareUtil
 import timber.log.Timber
 
-@RequiresApi(Build.VERSION_CODES.R)
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
 fun WebViewScreen(
@@ -104,11 +102,19 @@ fun WebViewScreen(
 
     DisposableEffect(view) {
         val listener = View.OnApplyWindowInsetsListener { v, insets ->
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime()) // 키보드 높이 가져옴
-            viewModel.updateKeyboardHeight(ime.bottom) // 뷰모델에 업데이트
-            insets // 원래의 insets 반환
+            val imeBottom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            } else {
+                WindowInsetsCompat.toWindowInsetsCompat(insets).systemWindowInsetBottom
+            }
+
+            viewModel.updateKeyboardHeight(imeBottom)
+
+            insets
         }
+
         view.setOnApplyWindowInsetsListener(listener)
+
         onDispose { view.setOnApplyWindowInsetsListener(null) }
     }
 
