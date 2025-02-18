@@ -72,12 +72,6 @@ fun PreviewScreen(
             is PreviewState.Idle -> {}
 
             is PreviewState.Error -> {
-                val errorMessage = (state as PreviewState.Error).message
-                Text(
-                    text = errorMessage,
-                    modifier = Modifier.padding(16.dp),
-                    color = Color.Red,
-                )
                 onClose(null)
             }
         }

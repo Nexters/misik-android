@@ -1,7 +1,6 @@
 package com.nexters.misik.preview
 
 import android.Manifest
-import android.app.Activity
 import androidx.activity.ComponentActivity
 import com.nexters.misik.core.ui.PreviewServiceContract
 import com.nexters.misik.preview.util.ImageHandler
@@ -15,10 +14,8 @@ class PreviewService @Inject constructor(
     private val permissionHandler: PermissionHandler,
     private val imageHandlerUtil: ImageHandler,
 ) : PreviewServiceContract {
-    private lateinit var activity: Activity
 
     override fun init(activity: ComponentActivity) {
-        this.activity = activity
         permissionHandler.init(activity) // 권한 요청 초기화
         imageHandlerUtil.init(activity) // 이미지 처리 초기화
     }
