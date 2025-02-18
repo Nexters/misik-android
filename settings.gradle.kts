@@ -1,4 +1,6 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -11,6 +13,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -21,4 +24,15 @@ dependencyResolutionManagement {
 
 rootProject.name = "Misik-Android"
 include(":app")
- 
+include(":data")
+include(":domain")
+include(":feature")
+include(":feature:webview")
+include(":network")
+
+gradle.startParameter.excludedTaskNames.addAll(listOf(":build-logic:convention:testClasses"))
+include(":ocr")
+include(":feature:preview")
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+include(":core:ui")
