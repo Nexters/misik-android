@@ -40,37 +40,24 @@ fun WebViewScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val responseJs by viewModel.responseJs.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-
-    val view = LocalView.current
     val keyboardHeight by viewModel.keyboardHeight.collectAsState()
+    val context = LocalContext.current
 
     val webInterface = remember {
         WebInterface { intent ->
             when (intent) {
-                is WebViewIntent.OpenCamera -> previewService.openCamera(
-                    {
-                        viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
-                    },
-                )
-
-                is WebViewIntent.OpenGallery -> previewService.openGallery(
-                    {
-                        viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
-                    },
-                )
-
-                is WebViewIntent.Share -> {
-                    ShareUtil.shareApp(context, intent.shareText)
+                is WebViewIntent.OpenCamera -> previewService.openCamera {
+                    viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
                 }
 
+                is WebViewIntent.OpenGallery -> previewService.openGallery {
+                    viewModel.sendIntent(WebViewIntent.HandleOcrResult(it))
+                }
+
+                is WebViewIntent.Share -> ShareUtil.shareApp(context, intent.shareText)
                 else -> viewModel.sendIntent(intent)
             }
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.getVersionUpdateStatus()
     }
 
     val initializedUrl by rememberUpdatedState(
@@ -93,6 +80,8 @@ fun WebViewScreen(
         )
     }
 
+    LaunchedEffect(Unit) { viewModel.getVersionUpdateStatus() }
+
     LaunchedEffect(initializedUrl) {
         if (initializedUrl.isNotEmpty()) {
             webView.loadUrl(initializedUrl)
@@ -100,68 +89,61 @@ fun WebViewScreen(
         }
     }
 
-    DisposableEffect(view) {
-        val listener = View.OnApplyWindowInsetsListener { v, insets ->
-            val imeBottom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            } else {
-                WindowInsetsCompat.toWindowInsetsCompat(insets).systemWindowInsetBottom
-            }
-
-            viewModel.updateKeyboardHeight(imeBottom)
-
-            insets
-        }
-
-        view.setOnApplyWindowInsetsListener(listener)
-
-        onDispose { view.setOnApplyWindowInsetsListener(null) }
-    }
-
-    // 키보드 높이 변화 시 웹에 전달
-    LaunchedEffect(keyboardHeight) {
-        if (keyboardHeight > 0) { // 키보드가 올라왔을 때만 전달
-            val jsCode =
-                makeKeyboardHeightResponse("receiveKeyboardHeight", keyboardHeight.toString())
-            webView.evaluateJavascript(jsCode, null)
-            Timber.d("WebViewScreen_sendKeyboardHeight", jsCode)
-        }
-    }
-
-    LaunchedEffect(responseJs) {
-        responseJs?.let {
-            webView.evaluateJavascript(it, null)
-            Timber.d("WebViewScreen_toJS_Success", it)
-        } ?: Timber.d("WebViewScreen_toJS_Failure", "js is null")
-    }
+    KeyboardInsetsListener { imeBottom -> viewModel.updateKeyboardHeight(imeBottom) }
+    SendKeyboardHeightToJS(keyboardHeight, webView)
+    EvaluateResponseJs(responseJs, webView)
 
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { webView },
-            update = { webView ->
-                Timber.d("updated :${webView.hashCode()}")
-            },
+            update = { Timber.d("updated :${it.hashCode()}") },
         )
-        when (val state = uiState) {
-            is WebViewState.CopyToClipBoard -> {
-                CopyToClipboard(state.review)
-            }
-
-            is WebViewState.PageLoading -> {
-                Timber.d("WebViewScreen_UiState", "Loading")
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.Center), // 오버레이처럼 위에 띄움
-                ) {
-                    LoadingAnimation(modifier = Modifier.align(Alignment.Center))
-                }
-            }
-
-            else -> {
-            }
+        when (uiState) {
+            is WebViewState.CopyToClipBoard -> CopyToClipboard((uiState as WebViewState.CopyToClipBoard).review)
+            is WebViewState.PageLoading -> LoadingOverlay()
+            else -> {}
         }
+    }
+}
+
+@Composable
+fun KeyboardInsetsListener(onKeyboardHeightChanged: (Int) -> Unit) {
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val listener = View.OnApplyWindowInsetsListener { _, insets ->
+            val imeBottom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            } else {
+                WindowInsetsCompat.toWindowInsetsCompat(insets).systemWindowInsetBottom
+            }
+            onKeyboardHeightChanged(imeBottom)
+            insets
+        }
+        view.setOnApplyWindowInsetsListener(listener)
+        onDispose { view.setOnApplyWindowInsetsListener(null) }
+    }
+}
+
+@Composable
+fun SendKeyboardHeightToJS(keyboardHeight: Int, webView: android.webkit.WebView) {
+    LaunchedEffect(keyboardHeight) {
+        if (keyboardHeight > 0) {
+            val jsCode =
+                makeKeyboardHeightResponse("receiveKeyboardHeight", keyboardHeight.toString())
+            webView.evaluateJavascript(jsCode, null)
+            Timber.d("WebViewScreen_sendKeyboardHeight: $jsCode")
+        }
+    }
+}
+
+@Composable
+fun EvaluateResponseJs(responseJs: String?, webView: android.webkit.WebView) {
+    LaunchedEffect(responseJs) {
+        responseJs?.let {
+            webView.evaluateJavascript(it, null)
+            Timber.d("WebViewScreen_toJS_Success: $it")
+        } ?: Timber.d("WebViewScreen_toJS_Failure: js is null")
     }
 }
 
@@ -169,6 +151,15 @@ fun WebViewScreen(
 fun CopyToClipboard(review: String) {
     val context = LocalContext.current
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clip = ClipData.newPlainText("Review", review)
-    clipboard.setPrimaryClip(clip)
+    clipboard.setPrimaryClip(ClipData.newPlainText("Review", review))
+}
+
+@Composable
+fun LoadingOverlay() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        LoadingAnimation()
+    }
 }
