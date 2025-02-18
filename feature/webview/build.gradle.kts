@@ -2,10 +2,12 @@ plugins {
     alias(libs.plugins.misik.android.library)
     alias(libs.plugins.misik.feature)
     alias(libs.plugins.misik.android.hilt)
+    alias(libs.plugins.misik.plugin.build.config)
 }
 
 android {
     namespace = "com.nexters.misik.feature.webview"
+
 }
 
 dependencies {

@@ -6,6 +6,7 @@ import com.google.gson.JsonSyntaxException
 import com.nexters.misik.webview.WebViewIntent
 import com.nexters.misik.webview.bridge.dto.request.CopyRequest
 import com.nexters.misik.webview.bridge.dto.request.CreateReviewRequest
+import com.nexters.misik.webview.bridge.dto.request.ShareRequest
 import com.nexters.misik.webview.bridge.dto.request.toIntent
 import timber.log.Timber
 
@@ -27,8 +28,13 @@ class WebInterface(
     }
 
     @JavascriptInterface
-    fun share() {
-        eventCallback(WebViewIntent.Share)
+    fun share(json: String) {
+        try {
+            val request = gson.fromJson(json, ShareRequest::class.java)
+            eventCallback(WebViewIntent.Share(request.shareText))
+        } catch (e: JsonSyntaxException) {
+            Timber.e("JsonSyntaxException in share: ${e.message}")
+        }
     }
 
     @JavascriptInterface

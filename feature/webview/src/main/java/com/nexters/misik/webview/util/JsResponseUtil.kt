@@ -24,4 +24,11 @@ object JsResponseUtil {
         }
         return makeResponse(functionName, jsonResponse.toString())
     }
+
+    fun makeKeyboardHeightResponse(functionName: String, keyboardHeight: String?): String {
+        val jsonResponse = JSONObject().apply {
+            put("height", keyboardHeight ?: RESPONSE_FAILURE_MSG)
+        }
+        return makeResponse(functionName, jsonResponse.toString())
+    }
 }

@@ -8,13 +8,8 @@ plugins {
 }
 
 android {
-    namespace = "com.hyeseon.misik.network"
-    buildFeatures {
-        buildConfig = true
-    }
-    defaultConfig {
-        buildConfigField("String", "NETWORK_BASE_URL", "\"https://api.misik.me/\"")
-    }
+    namespace = "com.nexters.misik.network"
+
 }
 
 dependencies {

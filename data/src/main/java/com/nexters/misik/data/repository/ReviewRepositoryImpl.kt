@@ -5,6 +5,7 @@ import com.nexters.misik.data.mapper.ReviewMapper.toDomain
 import com.nexters.misik.domain.ParsedEntity
 import com.nexters.misik.domain.ReviewEntity
 import com.nexters.misik.domain.ReviewRepository
+import com.nexters.misik.domain.UpdateUrl
 import com.nexters.misik.network.dto.request.GenerateReviewRequestDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -37,5 +38,12 @@ class ReviewRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             remoteDataSource.getOcrParsedResponse(text).toDomain()
         }
+    }
+
+    override suspend fun getVersionUpdateStatus(
+        appVersion: String,
+        appPlatform: String,
+    ): Result<UpdateUrl?> = runCatching {
+        remoteDataSource.getVersionUpdateStatus(appVersion, appPlatform).toDomain()
     }
 }

@@ -3,10 +3,12 @@ package com.nexters.misik.webview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nexters.misik.domain.ReviewRepository
+import com.nexters.misik.feature.webview.BuildConfig
 import com.nexters.misik.webview.util.JsResponseUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,6 +22,13 @@ class WebViewViewModel @Inject constructor(
 
     private val _responseJs = MutableStateFlow<String?>(null)
     val responseJs: StateFlow<String?> = _responseJs
+
+    private val _keyboardHeight = MutableStateFlow(0) // 키보드 높이 상태
+    val keyboardHeight: StateFlow<Int> = _keyboardHeight.asStateFlow()
+
+    fun updateKeyboardHeight(height: Int) {
+        _keyboardHeight.value = height
+    }
 
     fun sendIntent(intent: WebViewIntent) {
         when (intent) {
@@ -74,6 +83,37 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
+    fun getVersionUpdateStatus() {
+        viewModelScope.launch {
+            _state.value = WebViewState.PageLoading
+            reviewRepository.getVersionUpdateStatus(appVersion = BuildConfig.VERSION_NAME, appPlatform = "ANDROID")
+                .onSuccess { data ->
+                    if (data != null) {
+                        val url = data.url
+                        when (data.statusCode) {
+                            200 -> {
+                                if (url != null) {
+                                    _state.value = WebViewState.CheckIsUpdateRequired(url)
+                                }
+                            }
+
+                            426 -> {
+                                if (url != null) {
+                                    _state.value = WebViewState.CheckIsUpdateRequired(url)
+                                }
+                            }
+                        }
+
+                        Timber.d("getVersionUpdateStatus_Success", url)
+                    }
+                }
+                .onFailure { exception ->
+                    _state.value = WebViewState.PageLoading
+                    Timber.d("getVersionUpdateStatus_Failure", exception.message)
+                }
+        }
+    }
+
     private fun responseOcrParsed(ocrText: String?) {
         viewModelScope.launch {
             ocrText?.let {
@@ -117,7 +157,8 @@ class WebViewViewModel @Inject constructor(
                     Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
                 }
                 .onFailure { exception ->
-                    _responseJs.value = JsResponseUtil.makeFailureResponse("receiveGeneratedReview")
+                    _responseJs.value =
+                        JsResponseUtil.makeFailureResponse("receiveGeneratedReview")
                     Timber.d("getReview_Failure", exception.message)
                 }
         }

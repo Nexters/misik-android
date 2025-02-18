@@ -26,7 +26,6 @@ object MisikWebViewFactory {
             addJavascriptInterface(webInterface, "AndroidBridge")
             webViewClient = MisikWebViewClient(onEvent)
             webChromeClient = MisikWebChromeClient()
-            loadUrl("https://misik-web.vercel.app/")
         }
     }
 }
