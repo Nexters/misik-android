@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.nexters.misik.preview.PreviewService
+import com.nexters.misik.core.ui.LocalPreviewService
 import com.nexters.misik.webview.base.MisikWebViewFactory
 import com.nexters.misik.webview.bridge.WebInterface
 import com.nexters.misik.webview.common.LoadingAnimation
@@ -26,10 +26,11 @@ import timber.log.Timber
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
 fun WebViewScreen(
-    previewService: PreviewService,
+//    previewService: PreviewService,
     modifier: Modifier = Modifier,
     viewModel: WebViewViewModel = hiltViewModel(),
 ) {
+    val previewService = LocalPreviewService.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val responseJs by viewModel.responseJs.collectAsStateWithLifecycle()
     val context = LocalContext.current

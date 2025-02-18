@@ -35,3 +35,4 @@ include(":ocr")
 include(":feature:preview")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+include(":core:ui")

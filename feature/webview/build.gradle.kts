@@ -9,6 +9,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.ui)
     implementation(projects.data)
     implementation(projects.domain)
     implementation(projects.network)
@@ -16,4 +17,5 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
+    implementation(libs.androidx.appcompat)
 }

@@ -4,18 +4,10 @@ plugins {
 }
 
 android {
-    namespace = "com.nexters.misik.preview"
+    namespace = "com.nexters.misik.core.ui"
 }
 
 dependencies {
-    implementation(projects.core.ui)
-    implementation(projects.domain)
-    implementation(projects.ocr)
-    implementation(libs.timber)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.gif)
-    implementation(libs.lottie.compose)
-    implementation(libs.gson)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

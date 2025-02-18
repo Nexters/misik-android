@@ -1,5 +1,6 @@
 package com.nexters.misik.preview.di
 
+import com.nexters.misik.core.ui.PreviewServiceContract
 import com.nexters.misik.preview.PreviewService
 import com.nexters.misik.preview.util.ImageHandler
 import com.nexters.misik.preview.util.PermissionHandler
@@ -30,7 +31,7 @@ object PreviewModule {
     fun providePreviewService(
         permissionHandler: PermissionHandler,
         imageHandler: ImageHandler,
-    ): PreviewService {
+    ): PreviewServiceContract {
         return PreviewService(permissionHandler, imageHandler)
     }
 }

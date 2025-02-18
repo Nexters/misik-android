@@ -24,7 +24,8 @@
         </provider>
         <activity
             android:name=".ui.PreviewActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.MisikAndroid" />
 
     </application>
 

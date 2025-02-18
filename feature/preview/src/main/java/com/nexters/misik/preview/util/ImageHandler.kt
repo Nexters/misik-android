@@ -1,6 +1,7 @@
 package com.nexters.misik.preview.util
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.ComponentActivity
@@ -15,7 +16,7 @@ import com.nexters.misik.preview.util.ImageStorageUtil.getCameraImagePath
 enum class MediaType { CAMERA, GALLERY }
 
 class ImageHandler {
-    private lateinit var activity: Activity
+    private lateinit var context: Context
     private lateinit var galleryLauncher: ActivityResultLauncher<String>
     private lateinit var cameraLauncher: ActivityResultLauncher<Uri>
     private lateinit var previewResultLauncher: ActivityResultLauncher<Intent>
@@ -23,7 +24,7 @@ class ImageHandler {
     private var callback: ((String?) -> Unit)? = null
 
     fun init(activity: ComponentActivity) {
-        this.activity = activity
+        this.context = activity
 
         // 갤러리 실행
         this.galleryLauncher = activity.registerForActivityResult(GetContent()) { uri ->
@@ -75,7 +76,7 @@ class ImageHandler {
     }
 
     private fun startPreviewActivity(imageUri: String) {
-        val intent = Intent(activity, PreviewActivity::class.java).apply {
+        val intent = Intent(context, PreviewActivity::class.java).apply {
             putExtra("imageUri", imageUri)
         }
         previewResultLauncher.launch(intent)

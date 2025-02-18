@@ -11,6 +11,9 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.ui)
     implementation(projects.feature.webview)
+    implementation(projects.feature.preview)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
 }
