@@ -2,8 +2,8 @@ package com.nexters.misik.preview.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nexters.misik.domain.ReviewRepository
-import com.nexters.misik.domain.ocr.OcrService
+import com.nexters.misik.core.domain.ReviewRepository
+import com.nexters.misik.core.domain.ocr.OcrService
 import com.nexters.misik.preview.util.GsonUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PreviewViewModel @Inject constructor(
-    private val ocrService: OcrService,
-    private val reviewRepository: ReviewRepository,
+    private val ocrService: com.nexters.misik.core.domain.ocr.OcrService,
+    private val reviewRepository: com.nexters.misik.core.domain.ReviewRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<PreviewState>(PreviewState.Idle)

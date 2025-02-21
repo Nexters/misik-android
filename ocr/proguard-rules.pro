@@ -31,7 +31,7 @@
 -keep class **_HiltComponents { *; }
 
 # OcrService 관련 최적화 방지
--keep interface com.nexters.misik.domain.ocr.OcrService
+-keep interface com.nexters.misik.core.domain.ocr.OcrService
 -keep class com.nexters.misik.ocr.OcrServiceImpl { *; }
 
 # 추가적으로 Hilt 관련 어노테이션 유지
