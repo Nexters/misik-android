@@ -51,8 +51,6 @@
 - Coil
 - Lottie
 
-## Features
-
 
 ## Contributors
 
