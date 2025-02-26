@@ -94,7 +94,6 @@ fun WebViewScreen(
     SendKeyboardHeightToJS(keyboardHeight, webView)
     EvaluateResponseJs(responseJs, webView) { viewModel.initializeJs() }
 
-
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
@@ -153,7 +152,6 @@ fun EvaluateResponseJs(
         } ?: Timber.d("WebViewScreen_toJS_Failure: js is null")
     }
 }
-
 
 @Composable
 fun CopyToClipboard(review: String) {

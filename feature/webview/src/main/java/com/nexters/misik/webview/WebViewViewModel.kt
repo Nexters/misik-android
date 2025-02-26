@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WebViewViewModel @Inject constructor(
-    private val reviewRepository: com.nexters.misik.core.domain.ReviewRepository,
+    private val reviewRepository: ReviewRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow<WebViewState>(WebViewState.PageLoading)
     val state: StateFlow<WebViewState> = _state
@@ -30,8 +30,8 @@ class WebViewViewModel @Inject constructor(
         _keyboardHeight.value = height
     }
 
-    fun initializeJs(){
-        _responseJs.value = null
+    fun initializeJs() {
+        _responseJs.value = ""
     }
 
     fun sendIntent(intent: WebViewIntent) {
