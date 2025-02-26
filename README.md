@@ -26,6 +26,15 @@
 <img width=15% src="https://github.com/user-attachments/assets/1759fafe-f9f0-494f-b3b2-8cc7eb2e9104">
 <img width=15% src="https://github.com/user-attachments/assets/9aa1fb57-ad67-431b-ab4e-c4b9eb6f97cd">
 
+</br>
+</br>
+
+
+## Moudule Dependency Graph
+![Image](https://github.com/user-attachments/assets/d3e7eb90-3a4d-4fe2-bbf7-de5826d99724)
+
+</br>
+
 ## Package Structure
 ```
 📦 misik-android
@@ -42,6 +51,8 @@
 ├── 📂 ocr                        # OCR 처리 관련 모듈 (MLKit, Cloud Vision API 등)
 ```
 
+</br>
+
 ## Stack & Libraries
 - Kotlin & Coroutine
 - Jetpack Compose
@@ -50,7 +61,9 @@
 - Retrofit2, OkHttp3
 - Coil
 - Lottie
+- Ktlint, Spotless, DeteKt
 
+</br>
 
 ## Contributors
 
