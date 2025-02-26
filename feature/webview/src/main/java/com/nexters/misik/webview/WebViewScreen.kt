@@ -92,7 +92,8 @@ fun WebViewScreen(
 
     KeyboardInsetsListener { imeBottom -> viewModel.updateKeyboardHeight(imeBottom) }
     SendKeyboardHeightToJS(keyboardHeight, webView)
-    EvaluateResponseJs(responseJs, webView)
+    EvaluateResponseJs(responseJs, webView) { viewModel.initializeJs() }
+
 
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
@@ -139,14 +140,20 @@ fun SendKeyboardHeightToJS(keyboardHeight: Int, webView: android.webkit.WebView)
 }
 
 @Composable
-fun EvaluateResponseJs(responseJs: String?, webView: android.webkit.WebView) {
+fun EvaluateResponseJs(
+    responseJs: String?,
+    webView: android.webkit.WebView,
+    onEvaluateComplete: () -> Unit,
+) {
     LaunchedEffect(responseJs) {
         responseJs?.let {
             webView.evaluateJavascript(it, null)
             Timber.d("WebViewScreen_toJS_Success: $it")
+            onEvaluateComplete()
         } ?: Timber.d("WebViewScreen_toJS_Failure: js is null")
     }
 }
+
 
 @Composable
 fun CopyToClipboard(review: String) {

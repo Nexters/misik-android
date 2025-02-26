@@ -30,6 +30,10 @@ class WebViewViewModel @Inject constructor(
         _keyboardHeight.value = height
     }
 
+    fun initializeJs(){
+        _responseJs.value = null
+    }
+
     fun sendIntent(intent: WebViewIntent) {
         when (intent) {
             is WebViewIntent.Share -> {
