@@ -86,6 +86,7 @@ kakao-login = "2.19.0"
 process-pheonix = "3.0.0"
 preference = "1.2.1"
 spotless = "6.21.0"
+dependency-graph-generator = "0.7.0"
 
 #ocr
 mlkit-text = "16.0.1"
@@ -111,6 +112,7 @@ navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref 
 android-test = { id = "com.android.test", version.ref = "android-gradle-plugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+dependency-graph-generator = { id = "com.vanniktech.dependency.graph.generator", version.ref = "dependency-graph-generator" }
 
 # Custom Plugins
 misik-application = { id = "misik.android.application", version = "unspecified" }
