@@ -2,7 +2,7 @@ package com.nexters.misik.webview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nexters.misik.domain.ReviewRepository
+import com.nexters.misik.core.domain.ReviewRepository
 import com.nexters.misik.feature.webview.BuildConfig
 import com.nexters.misik.webview.util.JsResponseUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WebViewViewModel @Inject constructor(
-    private val reviewRepository: ReviewRepository,
+    private val reviewRepository: com.nexters.misik.core.domain.ReviewRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow<WebViewState>(WebViewState.PageLoading)
     val state: StateFlow<WebViewState> = _state
@@ -86,7 +86,10 @@ class WebViewViewModel @Inject constructor(
     fun getVersionUpdateStatus() {
         viewModelScope.launch {
             _state.value = WebViewState.PageLoading
-            reviewRepository.getVersionUpdateStatus(appVersion = BuildConfig.VERSION_NAME, appPlatform = "ANDROID")
+            reviewRepository.getVersionUpdateStatus(
+                appVersion = BuildConfig.VERSION_NAME,
+                appPlatform = "ANDROID",
+            )
                 .onSuccess { data ->
                     if (data != null) {
                         val url = data.url

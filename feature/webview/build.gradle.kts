@@ -12,9 +12,9 @@ android {
 
 dependencies {
     implementation(projects.core.ui)
-    implementation(projects.data)
-    implementation(projects.domain)
-    implementation(projects.network)
+    implementation(projects.core.data)
+    implementation(projects.core.domain)
+    implementation(projects.core.network)
     implementation(projects.feature.preview)
     implementation(libs.gson)
     implementation(libs.coil.compose)

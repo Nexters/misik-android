@@ -1,6 +1,6 @@
 package com.nexters.misik.ocr
 
-import com.nexters.misik.domain.ocr.OcrService
+import com.nexters.misik.core.domain.ocr.OcrService
 import com.nexters.misik.ocr.exception.CloudOcrException
 import com.nexters.misik.ocr.service.CloudOcrRecognizer
 import timber.log.Timber
@@ -10,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class OcrServiceImpl @Inject constructor(
     private val cloudOcrService: CloudOcrRecognizer,
-) : OcrService {
+) : com.nexters.misik.core.domain.ocr.OcrService {
 
     override suspend fun extractText(imagePath: String): String {
         Timber.plant(Timber.DebugTree())

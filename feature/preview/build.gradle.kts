@@ -9,7 +9,7 @@ android {
 
 dependencies {
     implementation(projects.core.ui)
-    implementation(projects.domain)
+    implementation(projects.core.domain)
     implementation(projects.ocr)
     implementation(libs.timber)
     implementation(libs.coil.compose)
