@@ -22,6 +22,7 @@ object MisikWebViewFactory {
             )
             settings.javaScriptEnabled = true
             settings.cacheMode = WebSettings.LOAD_NO_CACHE
+            settings.textZoom = 100
 
             addJavascriptInterface(webInterface, "AndroidBridge")
             webViewClient = MisikWebViewClient(onEvent)
