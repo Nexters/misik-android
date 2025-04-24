@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nexters.misik.core.domain.ReviewRepository
 import com.nexters.misik.feature.webview.BuildConfig
-import com.nexters.misik.webview.util.JsResponseUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +21,8 @@ class WebViewViewModel @Inject constructor(
     private val _state = MutableStateFlow<WebViewState>(WebViewState.PageLoading)
     val state: StateFlow<WebViewState> = _state
 
-    private val _responseJs = MutableSharedFlow<String>(replay = 0)
-    val responseJs: SharedFlow<String> = _responseJs
+    private val _sideEffect = MutableSharedFlow<UiSideEffect>()
+    val sideEffect: SharedFlow<UiSideEffect> = _sideEffect
 
     private val _keyboardHeight = MutableStateFlow(0)
     val keyboardHeight: StateFlow<Int> = _keyboardHeight.asStateFlow()
@@ -34,53 +33,14 @@ class WebViewViewModel @Inject constructor(
 
     fun sendIntent(intent: WebViewIntent) {
         when (intent) {
-            is WebViewIntent.Share -> {
-                Timber.d("WebViewIntent: Share")
-            }
-
-            is WebViewIntent.CreateReview -> {
-                Timber.d("WebViewIntent: CreateReview -> ${intent.ocrText}")
-                generateReview(intent)
-            }
-
-            is WebViewIntent.Copy -> {
-                Timber.d("WebViewIntent: Copy -> ${intent.review}")
-                copyToClipboard(intent.review)
-            }
-
-            is WebViewIntent.HandleOcrResult -> {
-                Timber.d("WebViewIntent: HandleOcrResult -> ${intent.ocrText}")
-                responseOcrParsed(intent.ocrText)
-            }
-
-            else -> {
-                Timber.d("WebViewIntent: else")
-            }
-        }
-    }
-
-    private fun copyToClipboard(review: String) {
-        _state.value = WebViewState.CopyToClipBoard(review)
-    }
-
-    fun onEvent(event: WebViewEvent) {
-        Timber.i("onEvent: $event")
-        when (event) {
-            WebViewEvent.LoadPage -> {
-                _state.value = WebViewState.PageLoading
-            }
-
-            WebViewEvent.PageLoaded -> {
-                _state.value = WebViewState.PageLoaded
-            }
-
-            is WebViewEvent.JsResponse -> {
-                _state.value = WebViewState.ResponseJS(event.response)
-            }
-
-            is WebViewEvent.JsError -> {
-                _state.value = WebViewState.Error(event.error)
-            }
+            is WebViewIntent.OpenCamera, is WebViewIntent.OpenGallery -> {}
+            is WebViewIntent.Share -> Timber.d("Share: ${intent.shareText}")
+            is WebViewIntent.Copy -> _state.value = WebViewState.CopyToClipboard(intent.review)
+            is WebViewIntent.HandleOcrResult -> handleOcr(intent.ocrText)
+            is WebViewIntent.CreateReview -> generateReview(intent)
+            is WebViewIntent.WebViewLoadFailed ->
+                _state.value =
+                    WebViewState.Error(intent.errorMessage)
         }
     }
 
@@ -118,15 +78,13 @@ class WebViewViewModel @Inject constructor(
         }
     }
 
-    private fun responseOcrParsed(ocrText: String?) {
+    private fun handleOcr(ocrText: String?) {
         viewModelScope.launch {
             ocrText?.let {
-                _state.value = WebViewState.ParseOcrText(ocrText)
-                _responseJs.emit(JsResponseUtil.makeResponse("receiveScanResult", ocrText))
-
+                _state.value = WebViewState.ParseOcrText(it)
+                _sideEffect.emit(UiSideEffect.SendJs("receiveScanResult", it))
             } ?: run {
-                _responseJs.emit(JsResponseUtil.makeFailureResponse("receiveScanResult"))
-
+                _sideEffect.emit(UiSideEffect.SendJs("receiveScanResult", ""))
             }
         }
     }
@@ -137,17 +95,14 @@ class WebViewViewModel @Inject constructor(
                 ocrText = intent.ocrText,
                 hashTags = intent.hashTags,
                 reviewStyle = intent.reviewStyle,
-            )
-                .onSuccess { data ->
-                    if (data != null) {
-                        _state.value = WebViewState.GenerateReview(data)
-                        getReview(data)
-                        Timber.d("generateReview_Success", data.toString())
-                    }
+            ).onSuccess { id ->
+                if (id != null) {
+                    _state.value = WebViewState.GenerateReview(id)
+                    getReview(id)
                 }
-                .onFailure { exception ->
-                    Timber.d("generateReview_Failure", exception.message)
-                }
+            }.onFailure {
+                Timber.e(it)
+            }
         }
     }
 
@@ -155,20 +110,12 @@ class WebViewViewModel @Inject constructor(
         viewModelScope.launch {
             reviewRepository.getReview(id)
                 .onSuccess { data ->
-                    val reviewText = data?.review ?: return@launch
-                    _state.value = WebViewState.CompleteReview(reviewText)
-                    _responseJs.emit(
-                        JsResponseUtil.makeReviewResponse(
-                            "receiveGeneratedReview",
-                            reviewText,
-                        ),
-                    )
-
-                    Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
+                    val review = data?.review ?: return@launch
+                    _state.value = WebViewState.CompleteReview(review)
+                    _sideEffect.emit(UiSideEffect.SendJs("receiveGeneratedReview", review))
                 }
-                .onFailure { exception ->
-                    _responseJs.emit(JsResponseUtil.makeFailureResponse("receiveGeneratedReview"))
-                    Timber.d("getReview_Failure", exception.message)
+                .onFailure {
+                    _sideEffect.emit(UiSideEffect.SendJs("receiveGeneratedReview", ""))
                 }
         }
     }

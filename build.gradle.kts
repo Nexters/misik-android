@@ -40,4 +40,3 @@ detekt {
     buildUponDefaultConfig = true
     debug = true
 }
-

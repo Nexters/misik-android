@@ -1,6 +1,5 @@
 package com.nexters.misik.webview
 
-import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -29,11 +28,12 @@ import com.nexters.misik.webview.base.MisikWebViewFactory
 import com.nexters.misik.webview.bridge.WebInterface
 import com.nexters.misik.webview.common.LoadingAnimation
 import com.nexters.misik.webview.util.JsResponseUtil.makeKeyboardHeightResponse
+import com.nexters.misik.webview.util.JsResponseUtil.makeResponse
+import com.nexters.misik.webview.util.JsResponseUtil.makeReviewResponse
 import com.nexters.misik.webview.util.ShareUtil
-import kotlinx.coroutines.flow.SharedFlow
 import timber.log.Timber
 
-@SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
+// --- WebViewScreen.kt ---
 @Composable
 fun WebViewScreen(
     modifier: Modifier = Modifier,
@@ -41,7 +41,6 @@ fun WebViewScreen(
 ) {
     val previewService = LocalPreviewService.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-
     val keyboardHeight by viewModel.keyboardHeight.collectAsState()
     val context = LocalContext.current
 
@@ -64,13 +63,8 @@ fun WebViewScreen(
 
     val initializedUrl by rememberUpdatedState(
         when (val state = uiState) {
-            is WebViewState.CheckIsUpdateRequired -> {
-                state.url
-            }
-
-            else -> {
-                ""
-            }
+            is WebViewState.CheckIsUpdateRequired -> state.url
+            else -> ""
         },
     )
 
@@ -78,11 +72,39 @@ fun WebViewScreen(
         MisikWebViewFactory.create(
             context = context,
             webInterface = webInterface,
-            onEvent = { event -> viewModel.onEvent(event) },
+            onWebError = { error -> viewModel.sendIntent(WebViewIntent.WebViewLoadFailed(error)) },
+
         )
     }
 
-    LaunchedEffect(Unit) { viewModel.getVersionUpdateStatus() }
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is UiSideEffect.SendJs -> {
+                    val js = when (effect.function) {
+                        "receiveGeneratedReview" -> makeReviewResponse(
+                            effect.function,
+                            effect.value,
+                        )
+
+                        "receiveKeyboardHeight" -> makeKeyboardHeightResponse(
+                            effect.function,
+                            effect.value,
+                        )
+
+                        else -> makeResponse(effect.function, effect.value)
+                    }
+                    webView.evaluateJavascript(js, null)
+                    Timber.d("WebViewScreen_sendJS: $js")
+                    Timber.d("WebViewScreen_toJS_Success: $js")
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getVersionUpdateStatus()
+    }
 
     LaunchedEffect(initializedUrl) {
         if (initializedUrl.isNotEmpty()) {
@@ -93,8 +115,6 @@ fun WebViewScreen(
 
     KeyboardInsetsListener { imeBottom -> viewModel.updateKeyboardHeight(imeBottom) }
     SendKeyboardHeightToJS(keyboardHeight, webView)
-    EvaluateResponseJs(viewModel.responseJs, webView)
-
 
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
@@ -103,7 +123,7 @@ fun WebViewScreen(
             update = { Timber.d("updated :${it.hashCode()}") },
         )
         when (uiState) {
-            is WebViewState.CopyToClipBoard -> CopyToClipboard((uiState as WebViewState.CopyToClipBoard).review)
+            is WebViewState.CopyToClipboard -> CopyToClipboard((uiState as WebViewState.CopyToClipboard).review)
             is WebViewState.PageLoading -> LoadingOverlay()
             else -> {}
         }
@@ -129,7 +149,7 @@ fun KeyboardInsetsListener(onKeyboardHeightChanged: (Int) -> Unit) {
 }
 
 @Composable
-fun SendKeyboardHeightToJS(keyboardHeight: Int, webView: android.webkit.WebView) {
+fun SendKeyboardHeightToJS(keyboardHeight: Int, webView: WebView) {
     LaunchedEffect(keyboardHeight) {
         if (keyboardHeight > 0) {
             val jsCode =
@@ -139,17 +159,6 @@ fun SendKeyboardHeightToJS(keyboardHeight: Int, webView: android.webkit.WebView)
         }
     }
 }
-
-@Composable
-fun EvaluateResponseJs(responseJs: SharedFlow<String>, webView: WebView) {
-    LaunchedEffect(Unit) {
-        responseJs.collect { js ->
-            webView.evaluateJavascript(js, null)
-            Timber.d("WebViewScreen_toJS_Success: $js")
-        }
-    }
-}
-
 
 @Composable
 fun CopyToClipboard(review: String) {

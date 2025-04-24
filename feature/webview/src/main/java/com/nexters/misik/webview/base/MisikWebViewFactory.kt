@@ -5,7 +5,6 @@ import android.content.Context
 import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
-import com.nexters.misik.webview.WebViewEvent
 import com.nexters.misik.webview.bridge.WebInterface
 
 object MisikWebViewFactory {
@@ -13,7 +12,8 @@ object MisikWebViewFactory {
     fun create(
         context: Context,
         webInterface: WebInterface,
-        onEvent: (WebViewEvent) -> Unit,
+        onWebError: (String) -> Unit,
+
     ): WebView {
         return WebView(context).apply {
             layoutParams = ViewGroup.LayoutParams(
@@ -24,7 +24,9 @@ object MisikWebViewFactory {
             settings.cacheMode = WebSettings.LOAD_NO_CACHE
 
             addJavascriptInterface(webInterface, "AndroidBridge")
-            webViewClient = MisikWebViewClient(onEvent)
+            webViewClient = MisikWebViewClient(
+                onWebError = onWebError,
+            )
             webChromeClient = MisikWebChromeClient()
         }
     }
