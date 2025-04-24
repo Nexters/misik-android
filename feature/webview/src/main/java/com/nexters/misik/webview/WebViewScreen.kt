@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.view.View
+import android.webkit.WebView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -29,18 +30,18 @@ import com.nexters.misik.webview.bridge.WebInterface
 import com.nexters.misik.webview.common.LoadingAnimation
 import com.nexters.misik.webview.util.JsResponseUtil.makeKeyboardHeightResponse
 import com.nexters.misik.webview.util.ShareUtil
+import kotlinx.coroutines.flow.SharedFlow
 import timber.log.Timber
 
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
 fun WebViewScreen(
-//    previewService: PreviewService,
     modifier: Modifier = Modifier,
     viewModel: WebViewViewModel = hiltViewModel(),
 ) {
     val previewService = LocalPreviewService.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val responseJs by viewModel.responseJs.collectAsStateWithLifecycle()
+
     val keyboardHeight by viewModel.keyboardHeight.collectAsState()
     val context = LocalContext.current
 
@@ -92,7 +93,8 @@ fun WebViewScreen(
 
     KeyboardInsetsListener { imeBottom -> viewModel.updateKeyboardHeight(imeBottom) }
     SendKeyboardHeightToJS(keyboardHeight, webView)
-    EvaluateResponseJs(responseJs, webView) { viewModel.initializeJs() }
+    EvaluateResponseJs(viewModel.responseJs, webView)
+
 
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
@@ -139,19 +141,15 @@ fun SendKeyboardHeightToJS(keyboardHeight: Int, webView: android.webkit.WebView)
 }
 
 @Composable
-fun EvaluateResponseJs(
-    responseJs: String?,
-    webView: android.webkit.WebView,
-    onEvaluateComplete: () -> Unit,
-) {
-    LaunchedEffect(responseJs) {
-        responseJs?.let {
-            webView.evaluateJavascript(it, null)
-            Timber.d("WebViewScreen_toJS_Success: $it")
-            onEvaluateComplete()
-        } ?: Timber.d("WebViewScreen_toJS_Failure: js is null")
+fun EvaluateResponseJs(responseJs: SharedFlow<String>, webView: WebView) {
+    LaunchedEffect(Unit) {
+        responseJs.collect { js ->
+            webView.evaluateJavascript(js, null)
+            Timber.d("WebViewScreen_toJS_Success: $js")
+        }
     }
 }
+
 
 @Composable
 fun CopyToClipboard(review: String) {

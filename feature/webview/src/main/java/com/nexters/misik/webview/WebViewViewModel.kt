@@ -6,7 +6,9 @@ import com.nexters.misik.core.domain.ReviewRepository
 import com.nexters.misik.feature.webview.BuildConfig
 import com.nexters.misik.webview.util.JsResponseUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -20,25 +22,20 @@ class WebViewViewModel @Inject constructor(
     private val _state = MutableStateFlow<WebViewState>(WebViewState.PageLoading)
     val state: StateFlow<WebViewState> = _state
 
-    private val _responseJs = MutableStateFlow<String?>(null)
-    val responseJs: StateFlow<String?> = _responseJs
+    private val _responseJs = MutableSharedFlow<String>(replay = 0)
+    val responseJs: SharedFlow<String> = _responseJs
 
-    private val _keyboardHeight = MutableStateFlow(0) // 키보드 높이 상태
+    private val _keyboardHeight = MutableStateFlow(0)
     val keyboardHeight: StateFlow<Int> = _keyboardHeight.asStateFlow()
 
     fun updateKeyboardHeight(height: Int) {
         _keyboardHeight.value = height
     }
 
-    fun initializeJs() {
-        _responseJs.value = ""
-    }
-
     fun sendIntent(intent: WebViewIntent) {
         when (intent) {
             is WebViewIntent.Share -> {
                 Timber.d("WebViewIntent: Share")
-                // 공유 기능 실행
             }
 
             is WebViewIntent.CreateReview -> {
@@ -125,9 +122,11 @@ class WebViewViewModel @Inject constructor(
         viewModelScope.launch {
             ocrText?.let {
                 _state.value = WebViewState.ParseOcrText(ocrText)
-                _responseJs.value = JsResponseUtil.makeResponse("receiveScanResult", ocrText)
+                _responseJs.emit(JsResponseUtil.makeResponse("receiveScanResult", ocrText))
+
             } ?: run {
-                _responseJs.value = JsResponseUtil.makeFailureResponse("receiveScanResult")
+                _responseJs.emit(JsResponseUtil.makeFailureResponse("receiveScanResult"))
+
             }
         }
     }
@@ -158,14 +157,17 @@ class WebViewViewModel @Inject constructor(
                 .onSuccess { data ->
                     val reviewText = data?.review ?: return@launch
                     _state.value = WebViewState.CompleteReview(reviewText)
-                    _responseJs.value =
-                        JsResponseUtil.makeReviewResponse("receiveGeneratedReview", reviewText)
+                    _responseJs.emit(
+                        JsResponseUtil.makeReviewResponse(
+                            "receiveGeneratedReview",
+                            reviewText,
+                        ),
+                    )
 
                     Timber.d("getReview_Success", " ${data.isSuccess} $reviewText ${data.id}")
                 }
                 .onFailure { exception ->
-                    _responseJs.value =
-                        JsResponseUtil.makeFailureResponse("receiveGeneratedReview")
+                    _responseJs.emit(JsResponseUtil.makeFailureResponse("receiveGeneratedReview"))
                     Timber.d("getReview_Failure", exception.message)
                 }
         }
