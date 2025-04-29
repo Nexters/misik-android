@@ -22,10 +22,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import com.nexters.misik.core.ui.LocalPreviewService
 import com.nexters.misik.webview.base.MisikWebViewFactory
 import com.nexters.misik.webview.bridge.WebInterface
@@ -77,32 +74,29 @@ fun WebViewScreen(
             webInterface = webInterface,
             onWebError = { error -> viewModel.sendIntent(WebViewIntent.WebViewLoadFailed(error)) },
 
-        )
+            )
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-
     LaunchedEffect(Unit) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.sideEffect.collect { effect ->
-                when (effect) {
-                    is UiSideEffect.SendJs -> {
-                        val js = when (effect.function) {
-                            "receiveGeneratedReview" -> makeReviewResponse(
-                                effect.function,
-                                effect.value,
-                            )
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is UiSideEffect.SendJs -> {
+                    val js = when (effect.function) {
+                        "receiveGeneratedReview" -> makeReviewResponse(
+                            effect.function,
+                            effect.value,
+                        )
 
-                            "receiveKeyboardHeight" -> makeKeyboardHeightResponse(
-                                effect.function,
-                                effect.value,
-                            )
+                        "receiveKeyboardHeight" -> makeKeyboardHeightResponse(
+                            effect.function,
+                            effect.value,
+                        )
 
-                            else -> makeResponse(effect.function, effect.value)
-                        }
-                        webView.evaluateJavascript(js, null)
-                        Timber.d("WebViewScreen_toJS_Success: $js")
+                        else -> makeResponse(effect.function, effect.value)
                     }
+                    webView.evaluateJavascript(js, null)
+                    Timber.d("WebViewScreen_sendJS: $js")
+                    Timber.d("WebViewScreen_toJS_Success: $js")
                 }
             }
         }
