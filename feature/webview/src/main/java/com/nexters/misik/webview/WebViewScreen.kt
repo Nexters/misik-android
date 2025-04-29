@@ -74,7 +74,7 @@ fun WebViewScreen(
             webInterface = webInterface,
             onWebError = { error -> viewModel.sendIntent(WebViewIntent.WebViewLoadFailed(error)) },
 
-            )
+        )
     }
 
     LaunchedEffect(Unit) {
